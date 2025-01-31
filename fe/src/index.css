@@ -1,7 +1,22 @@
 @import "tailwindcss";
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Forta";
+  src: url("/fonts/Forta.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-forta {
+  font-family: "Forta", sans-serif;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

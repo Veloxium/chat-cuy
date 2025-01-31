@@ -4,7 +4,7 @@ import { toast } from "sonner";
 function LandingPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8">
-      <p className="text-5xl">LandingPage</p>
+      <p className="text-5xl font-forta">LandingPage</p>
       <Button
         variant="default"
         className="bg-green-400 cursor-pointer"
