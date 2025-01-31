@@ -7,7 +7,7 @@ function LandingPage() {
       <p className="text-5xl font-forta">LandingPage</p>
       <Button
         variant="default"
-        className="bg-green-400 cursor-pointer"
+        className=""
         onClick={() =>
           toast("Event has been created", {
             description: "Sunday, December 03, 2023 at 9:00 AM",

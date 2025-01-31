@@ -4,6 +4,9 @@ export default {
 	content: ["./src/**/*.{html,js,ts,jsx,tsx}", "./node_modules/@shadcn/ui/dist/**/*.js",],
 	theme: {
 		extend: {
+			fontFamily: {
+				forta: ["Forta", "sans-serif"],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
