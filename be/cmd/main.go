@@ -14,7 +14,8 @@ func main() {
 	dbConnection, err := database.NewDatabaseConn()
 	if err != nil {
 		log.Fatalf("error when initial database %s", err)
-	}
+    }
+
 
 	userRepository := user.NewRepository(dbConnection.GetDB())
 	userService := user.NewService(userRepository)

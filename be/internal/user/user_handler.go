@@ -2,7 +2,6 @@ package user
 
 import (
 	"net/http"
-
 	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -69,18 +68,19 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("jwt", res.accessToken, 3600, "/", "localhost", false, true)
+	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
 
-	newRes := &LoginUserRes{
+	newResponse := &LoginUserRes{
 		Username: res.Username,
 		ID:       res.ID,
+      AccessToken: res.AccessToken,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
 		Success:    true,
 		StatusCode: http.StatusOK,
 		Message:    "login successfully",
-		Data:       newRes,
+		Data:       newResponse,
 	})
 }
 
