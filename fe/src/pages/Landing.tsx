@@ -34,12 +34,12 @@ function LandingPage() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-white text-zprimary flex flex-col items-center justify-center gap-4 py-8 px-4 w-full max-w-lg rounded-lg"
+          className="bg-white text-zprimary border border-zprimary flex flex-col items-center justify-center py-8 px-4 w-full max-w-lg rounded-lg"
         >
           <div className="text-center mb-6">
             <p className="text-2xl font-forta">Welcome to</p>
-            <p className="text-5xl font-forta">Chat Cuy😲</p>
-            <p className="font-semibold mt-2 text-lg">
+            <p className="text-5xl font-forta flex">Chat Cuy <span className="hidden md:block">😲</span></p>
+            <p className="font-bold mt-2 text-sm md:text-lg">
               Chat dengan siapa pun yang kamu mau
             </p>
           </div>
@@ -105,7 +105,7 @@ function LandingPage() {
           <a
             target="_blank"
             href={"https://github.com/Veloxium/chat-cuy"}
-            className="mt-4 flex items-center text-sm gap-1 hover:underline justify-end w-full max-w-sm"
+            className="mt-4 flex items-center text-xs gap-1 hover:underline justify-end w-full max-w-sm"
           >
             <p>Our Repository</p>
             <CiCircleQuestion size={16} />

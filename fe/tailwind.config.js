@@ -18,6 +18,7 @@ export default {
       colors: {
         zprimary: "#4361ee",
         hprimary: "#3a86ff",
+        zbase: "#edf6f9",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

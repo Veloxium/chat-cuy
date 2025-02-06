@@ -1,9 +1,31 @@
-import React from 'react'
+import HomeLayout from "@/layout/homeLayout";
 
 function HomePage() {
   return (
-    <div>HomePage</div>
-  )
+    <HomeLayout>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+      <p className="text-6xl">Halooo</p>
+    </HomeLayout>
+  );
 }
 
-export default HomePage
+export default HomePage;
