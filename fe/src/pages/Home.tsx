@@ -1,8 +1,9 @@
-import HomeLayout from "@/layout/homeLayout";
+import SideBarLayout from "@/layout/SideBarLayout";
+
 
 function HomePage() {
   return (
-    <HomeLayout>
+    <SideBarLayout>
       <p className="text-6xl">Halooo</p>
       <p className="text-6xl">Halooo</p>
       <p className="text-6xl">Halooo</p>
@@ -24,7 +25,7 @@ function HomePage() {
       <p className="text-6xl">Halooo</p>
       <p className="text-6xl">Halooo</p>
       <p className="text-6xl">Halooo</p>
-    </HomeLayout>
+    </SideBarLayout>
   );
 }
 
