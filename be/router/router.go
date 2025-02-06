@@ -26,6 +26,7 @@ func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler) {
 	}))
 	r.POST("/signup", userHandler.CreateUser)
 	r.POST("/login", userHandler.Login)
+	r.POST("/login/google", userHandler.LoginWithGoogle)
 	r.GET("/logout", userHandler.Logout)
 
 	r.POST("/ws/createRoom", wsHandler.CreateRoom)

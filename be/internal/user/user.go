@@ -30,6 +30,18 @@ type LoginUserRes struct {
 	AccessToken string `json:"accessToken"`
 	ID          string `json:"id" db:"id"`
 	Username    string `json:"username" db:"username"`
+	Email    string `json:"email" db:"email"`
+}
+
+type LoginUserWithGoogleReq struct {
+	AccessToken string `json:"accessToken"`
+}
+
+type LoginUserWithGoogleRes struct {
+	AccessToken string `json:"accessToken"`
+	ID          string `json:"id" db:"id"`
+	Username    string `json:"username" db:"username"`
+	Email       string `json:"email" db:"email"`
 }
 
 type Repository interface {
@@ -40,4 +52,5 @@ type Repository interface {
 type Service interface {
 	CreateUser(c context.Context, req *CreateUserReq) (*CreateUserRes, error)
 	Login(c context.Context, req *LoginUserReq) (*LoginUserRes, error)
+	LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error)
 }

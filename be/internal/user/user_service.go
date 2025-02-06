@@ -4,6 +4,8 @@ import (
 	"context"
 	"strconv"
 	"time"
+
+	"github.com/Gylmynnn/websocket-sesat/database"
 	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -11,6 +13,12 @@ import (
 const (
 	secretKey = "sholatlimawaktu24434"
 )
+
+type MyJWTClaims struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
 type service struct {
 	Repository
@@ -54,11 +62,7 @@ func (s *service) CreateUser(c context.Context, req *CreateUserReq) (*CreateUser
 
 }
 
-type MyJWTClaims struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
+
 
 func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, error) {
 	ctx, cancle := context.WithTimeout(c, s.timeout)
@@ -88,4 +92,60 @@ func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, er
 	}
 	res := &LoginUserRes{AccessToken: ss, Username: u.Username, ID: strconv.Itoa(int(u.ID))}
 	return res, nil
+}
+
+
+
+func (s *service) LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error) {
+
+	ctx, cancle := context.WithTimeout(c, s.timeout)
+	defer cancle()
+
+	token, err := database.AuthClient.VerifyIDToken(ctx, req.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	userRecord, err := database.AuthClient.GetUser(ctx, token.UID)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.Repository.GetUserByEmail(ctx, userRecord.Email)
+	if err != nil {
+		user = &User{
+			Username: userRecord.DisplayName,
+			Email:    userRecord.Email,
+			Password: "",
+		}
+
+		user, err = s.Repository.CreateUser(ctx, user)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+		ID:       strconv.Itoa(int(user.ID)),
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    strconv.Itoa(int(user.ID)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	})
+
+	ss, err := jwtToken.SignedString([]byte(secretKey))
+	if err != nil {
+		return nil, err
+	}
+
+	res := &LoginUserWithGoogleRes{
+		AccessToken: ss,
+		ID:          strconv.Itoa(int(user.ID)),
+		Username:    user.Username,
+		Email:       user.Email,
+	}
+
+	return res, nil
+
 }
