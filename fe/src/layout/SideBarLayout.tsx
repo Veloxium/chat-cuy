@@ -11,11 +11,9 @@ import { LuCircleDotDashed } from "react-icons/lu";
 function SideBarLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex">
-      <div className="w-14 bg-zbase-200 flex flex-col h-screen justify-between items-center">
-        <div className="h-14 w-14 relative flex items-center overflow-hidden z-10">
-          <ZBackground />
-          <p className="font-forta text-white text-center">Chat Cuy</p>
-        </div>
+      <div className="relative z-10 w-14 bg-zbase-200 flex flex-col h-screen justify-between items-center">
+        <ZBackground />
+        <p className="font-forta text-white text-center pt-4">Chat Cuy</p>
         <div className="space-y-4 flex-1 mt-20">
           <div className="border border-zprimary bg-zprimary w-10 h-10 place-items-center place-content-center rounded-md">
             <IoChatbubbleEllipsesOutline color="white" size={26} />
