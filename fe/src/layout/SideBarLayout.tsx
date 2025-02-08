@@ -11,7 +11,7 @@ import { LuCircleDotDashed } from "react-icons/lu";
 function SideBarLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex">
-      <div className="w-14 bg-zbase flex flex-col h-screen justify-between items-center">
+      <div className="w-14 bg-zbase-200 flex flex-col h-screen justify-between items-center">
         <div className="h-14 w-14 relative flex items-center overflow-hidden z-10">
           <ZBackground />
           <p className="font-forta text-white text-center">Chat Cuy</p>
@@ -39,7 +39,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-      <div className="h-screen flex-1 overflow-auto">
+      <div className="h-screen flex-1 overflow-auto py-4 bg-zbase-100">
         <IndexLayout>{children}</IndexLayout>
       </div>
     </div>

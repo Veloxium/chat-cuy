@@ -49,7 +49,9 @@ function LandingPage() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-white text-zprimary border border-zprimary flex flex-col items-center justify-center py-8 px-4 w-full max-w-lg rounded-lg"
+          className={`bg-white text-zprimary border border-zprimary flex flex-col items-center justify-center py-8 px-4 w-full rounded-lg ease-in-out duration-300 ${
+            isNewUser ? "max-w-4xl" : "max-w-lg"
+          }`}
         >
           <div className="flex flex-col items-center text-center mb-6">
             <p className="text-2xl font-forta">Selamat Datang di</p>
@@ -73,15 +75,17 @@ function LandingPage() {
           </div>
           <AnimatePresence mode="wait">
             {isNewUser ? (
-              <RegisterForm setIsNewUser={setIsNewUser} key="regis"/>
+              <RegisterForm setIsNewUser={setIsNewUser} key="regis" />
             ) : (
-              <LoginForm setIsNewUser={setIsNewUser} key="login"/>
+              <LoginForm setIsNewUser={setIsNewUser} key="login" />
             )}
           </AnimatePresence>
           <a
             target="_blank"
             href={"https://github.com/Veloxium/chat-cuy"}
-            className="mt-4 flex items-center text-xs gap-1 hover:underline justify-end w-full max-w-sm"
+            className={`mt-4 flex items-center text-xs gap-1 hover:underline justify-end w-full ease-in-out duration-300 ${
+              isNewUser ? "max-w-3xl" : "max-w-lg"
+            }`}
           >
             <p>Our Repository</p>
             <CiCircleQuestion size={16} />
