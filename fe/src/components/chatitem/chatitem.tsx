@@ -1,4 +1,5 @@
 import { getHourMinute } from "@/utils/timeFormat";
+import { Link } from "react-router-dom";
 
 type ChatItemsProps = {
   items: {
@@ -19,6 +20,7 @@ function ChatItem({ items }: ChatItemsProps) {
       <div className="w-16 h-16 rounded-full border relative overflow-hidden bg-white">
         <img src={items.image} alt="avatar" />
       </div>
+      <Link to={`/chat/${items.name.toLowerCase()}`} className="flex-1">
       <div className="flex-1 flex flex-col">
         <div className="flex justify-between">
           <p className="text-lg font-semibold">{items.name}</p>
@@ -26,7 +28,7 @@ function ChatItem({ items }: ChatItemsProps) {
         </div>
         <div className="flex justify-start">
           <div className="flex justify-start">
-            <div className="w-[120px]">
+            <div className="w-[140px]">
               <p className="line-clamp-1">
                 {items.message.sender_id === 1
                   ? "Anda: " + items.message.text
@@ -36,6 +38,7 @@ function ChatItem({ items }: ChatItemsProps) {
           </div>
         </div>
       </div>
+      </Link>
     </div>
   );
 }

@@ -37,7 +37,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-      <div className="h-screen flex-1 overflow-auto py-4 bg-zbase-100">
+      <div className="h-screen flex-1 py-4 bg-zbase-100 overflow-y-scroll no-scrollbar">
         <IndexLayout>{children}</IndexLayout>
       </div>
     </div>

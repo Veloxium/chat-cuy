@@ -4,7 +4,7 @@ const dataChatItem = [
         "name": "Alexandra",
         "message": {
             "text": "Anjaayy bang",
-            "timestamp": "2021-01-01 12:00:00",
+            "timestamp": "2021-01-01T12:00:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Jude"
@@ -14,7 +14,7 @@ const dataChatItem = [
         "name": "Brian",
         "message": {
             "text": "I'm good, thanks!",
-            "timestamp": "2021-01-01 12:01:00",
+            "timestamp": "2021-01-01T12:01:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Brian"
@@ -24,7 +24,7 @@ const dataChatItem = [
         "name": "Catherine",
         "message": {
             "text": "What are you up to?",
-            "timestamp": "2021-01-01 12:02:00",
+            "timestamp": "2021-01-01T12:02:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden"
@@ -34,7 +34,7 @@ const dataChatItem = [
         "name": "David",
         "message": {
             "text": "Just working on a project.",
-            "timestamp": "2021-01-01 12:03:00",
+            "timestamp": "2021-01-01T12:03:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Jocelyn"
@@ -44,7 +44,7 @@ const dataChatItem = [
         "name": "Eva",
         "message": {
             "text": "Sounds interesting!",
-            "timestamp": "2021-01-01 12:04:00",
+            "timestamp": "2021-01-01T12:04:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Leo"
@@ -54,7 +54,7 @@ const dataChatItem = [
         "name": "Frank",
         "message": {
             "text": "Can I help with anything?",
-            "timestamp": "2021-01-01 12:05:00",
+            "timestamp": "2021-01-01T12:05:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Mason"
@@ -64,7 +64,7 @@ const dataChatItem = [
         "name": "Grace",
         "message": {
             "text": "I'm here if you need me.",
-            "timestamp": "2021-01-01 12:06:00",
+            "timestamp": "2021-01-01T12:06:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Maria"
@@ -74,7 +74,7 @@ const dataChatItem = [
         "name": "Henry",
         "message": {
             "text": "Thanks, I appreciate it.",
-            "timestamp": "2021-01-01 12:07:00",
+            "timestamp": "2021-01-01T12:07:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Liam"
@@ -84,7 +84,7 @@ const dataChatItem = [
         "name": "Isabella",
         "message": {
             "text": "No problem at all.",
-            "timestamp": "2021-01-01 12:08:00",
+            "timestamp": "2021-01-01T12:08:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Jack"
@@ -94,7 +94,7 @@ const dataChatItem = [
         "name": "Jack",
         "message": {
             "text": "How's everyone doing?",
-            "timestamp": "2021-01-01 12:09:00",
+            "timestamp": "2021-01-01T12:09:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Liam"
@@ -104,7 +104,7 @@ const dataChatItem = [
         "name": "Karen",
         "message": {
             "text": "Doing great, thanks!",
-            "timestamp": "2021-01-01 12:10:00",
+            "timestamp": "2021-01-01T12:10:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Nolan"
@@ -114,7 +114,7 @@ const dataChatItem = [
         "name": "Leo",
         "message": {
             "text": "Glad to hear that.",
-            "timestamp": "2021-01-01 12:11:00",
+            "timestamp": "2021-01-01T12:11:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Liam"
@@ -124,7 +124,7 @@ const dataChatItem = [
         "name": "Mia",
         "message": {
             "text": "Let's catch up soon.",
-            "timestamp": "2021-01-01 12:12:00",
+            "timestamp": "2021-01-01T12:12:00Z",
             "sender_id": 2
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Liliana"
@@ -134,7 +134,7 @@ const dataChatItem = [
         "name": "Nathan",
         "message": {
             "text": "Absolutely, let's do it.",
-            "timestamp": "2021-01-01 12:13:00",
+            "timestamp": "2021-01-01T12:13:00Z",
             "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Sara"
