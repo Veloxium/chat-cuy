@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-var r *gin.Engine
+var app *gin.Engine
 
 func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler) {
-	r = gin.Default()
+	app = gin.Default()
 
-	r.Use(cors.New(cors.Config{
+	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"Content-Type"},
@@ -24,17 +24,18 @@ func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler) {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-	r.POST("/signup", userHandler.CreateUser)
-	r.POST("/login", userHandler.Login)
-	r.POST("/login/google", userHandler.LoginWithGoogle)
-	r.GET("/logout", userHandler.Logout)
+	app.POST("/signup", userHandler.CreateUser)
+	app.POST("/login", userHandler.Login)
+	app.POST("/withgoogle", userHandler.LoginWithGoogle)
+	app.POST("/withfacebook", userHandler.LoginWithFacebook)
+	app.GET("/logout", userHandler.Logout)
 
-	r.POST("/ws/createRoom", wsHandler.CreateRoom)
-	r.GET("/ws/joinRoom/:roomId", wsHandler.JoinRoom)
-	r.GET("/ws/getRooms", wsHandler.GetRooms)
-	r.GET("/ws/getClients/:roomId", wsHandler.GetClient)
+	app.POST("/ws/createRoom", wsHandler.CreateRoom)
+	app.GET("/ws/joinRoom/:roomId", wsHandler.JoinRoom)
+	app.GET("/ws/getRooms", wsHandler.GetRooms)
+	app.GET("/ws/getClients/:roomId", wsHandler.GetClient)
 }
 
 func Start(addr string) error {
-	return r.Run(addr)
+	return app.Run(addr)
 }
