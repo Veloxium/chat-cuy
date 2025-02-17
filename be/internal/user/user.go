@@ -1,12 +1,19 @@
 package user
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type User struct {
-	ID       int64  `json:"id" db:"id"`
-	Username string `json:"username" db:"username"`
-	Email    string `json:"email" db:"email"`
-	Password string `json:"password" db:"password"`
+	ID        int64      `json:"id" db:"id"`
+	Username  string     `json:"username" db:"username"`
+	Email     string     `json:"email" db:"email"`
+	Password  string     `json:"password" db:"password"`
+	Avatar    string     `json:"avatar" db:"avatar"`
+	Bio       string     `json:"bio" db:"bio"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
 type CreateUserReq struct {
@@ -16,9 +23,12 @@ type CreateUserReq struct {
 }
 
 type CreateUserRes struct {
-	ID       string `json:"id" db:"id"`
-	Username string `json:"username" db:"username"`
-	Email    string `json:"email" db:"email"`
+	ID        string    `json:"id" db:"id"`
+	Username  string    `json:"username" db:"username"`
+	Email     string    `json:"email" db:"email"`
+	Avatar    string    `json:"avatar" db:"avatar"`
+	Bio       string    `json:"bio" db:"bio"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserReq struct {
@@ -27,10 +37,13 @@ type LoginUserReq struct {
 }
 
 type LoginUserRes struct {
-	AccessToken string `json:"accessToken"`
-	ID          string `json:"id" db:"id"`
-	Username    string `json:"username" db:"username"`
-	Email    string `json:"email" db:"email"`
+	AccessToken string    `json:"accessToken"`
+	ID          string    `json:"id" db:"id"`
+	Username    string    `json:"username" db:"username"`
+	Email       string    `json:"email" db:"email"`
+	Avatar      string    `json:"avatar" db:"avatar"`
+	Bio         string    `json:"bio" db:"bio"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserWithGoogleReq struct {
@@ -38,11 +51,29 @@ type LoginUserWithGoogleReq struct {
 }
 
 type LoginUserWithGoogleRes struct {
-	AccessToken string `json:"accessToken"`
-	ID          string `json:"id" db:"id"`
-	Username    string `json:"username" db:"username"`
-	Email       string `json:"email" db:"email"`
+	AccessToken string    `json:"accessToken"`
+	ID          string    `json:"id" db:"id"`
+	Username    string    `json:"username" db:"username"`
+	Email       string    `json:"email" db:"email"`
+	Avatar      string    `json:"avatar" db:"avatar"`
+	Bio         string    `json:"bio" db:"bio"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
+
+type LoginUserWithFacebookReq struct {
+	AccessToken string `json:"accessToken"`
+}
+
+type LoginUserWithFacebookRes struct {
+	AccessToken string    `json:"accessToken"`
+	ID          string    `json:"id" db:"id"`
+	Username    string    `json:"username" db:"username"`
+	Email       string    `json:"email" db:"email"`
+	Avatar      string    `json:"avatar" db:"avatar"`
+	Bio         string    `json:"bio" db:"bio"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+}
+
 
 type Repository interface {
 	CreateUser(ctx context.Context, user *User) (*User, error)
@@ -53,4 +84,5 @@ type Service interface {
 	CreateUser(c context.Context, req *CreateUserReq) (*CreateUserRes, error)
 	Login(c context.Context, req *LoginUserReq) (*LoginUserRes, error)
 	LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error)
+	LoginWithFacebook(c context.Context, req *LoginUserWithFacebookReq) (*LoginUserWithFacebookRes, error)
 }
