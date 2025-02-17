@@ -74,6 +74,10 @@ func (h *Handler) Login(c *gin.Context) {
 		Username:    res.Username,
 		ID:          res.ID,
 		AccessToken: res.AccessToken,
+		Email:       res.Email,
+		Avatar:      res.Avatar,
+		Bio:         res.Bio,
+		CreatedAt:   res.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
@@ -108,18 +112,64 @@ func (h *Handler) LoginWithGoogle(c *gin.Context) {
 
 	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
 
-	newRes := &LoginUserWithGoogleRes{
+	newResponse := &LoginUserWithGoogleRes{
 		Email:       res.Email,
 		Username:    res.Username,
 		ID:          res.ID,
 		AccessToken: res.AccessToken,
+		Avatar:      res.Avatar,
+		Bio:         res.Bio,
+		CreatedAt:   res.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
 		Success:    true,
 		StatusCode: http.StatusOK,
 		Message:    "login successfully with google",
-		Data:       newRes,
+		Data:       newResponse,
+	})
+
+}
+
+func (h *Handler) LoginWithFacebook(c *gin.Context) {
+	var user LoginUserWithFacebookReq
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, utils.ResFormatter{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "error :" + err.Error(),
+			Data:       nil,
+		})
+	}
+
+	res, err := h.Service.LoginWithFacebook(c.Request.Context(), &user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.ResFormatter{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			Message:    "error :" + err.Error(),
+			Data:       nil,
+		})
+		return
+	}
+
+	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
+
+	newResponse := &LoginUserWithFacebookRes{
+		Email:       res.Email,
+		Username:    res.Username,
+		ID:          res.ID,
+		AccessToken: res.AccessToken,
+		Avatar:      res.Avatar,
+		Bio:         res.Bio,
+		CreatedAt:   res.CreatedAt,
+	}
+
+	c.JSON(http.StatusOK, utils.ResFormatter{
+		Success:    true,
+		StatusCode: http.StatusOK,
+		Message:    "login successfully with google",
+		Data:       newResponse,
 	})
 
 }
