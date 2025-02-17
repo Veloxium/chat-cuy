@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"database/sql"
 	"strconv"
 	"time"
 
@@ -41,47 +42,50 @@ func (s *service) CreateUser(c context.Context, req *CreateUserReq) (*CreateUser
 		return nil, err
 	}
 
-	u := &User{
+	user := &User{
 		Username: req.Username,
 		Email:    req.Email,
 		Password: hashedPassword,
+		Avatar:   "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden",
+		Bio:      "Hallo world",
 	}
 
-	r, err := s.Repository.CreateUser(ctx, u)
+	user, err = s.Repository.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
 	res := &CreateUserRes{
-		ID:       strconv.Itoa(int(r.ID)),
-		Username: r.Username,
-		Email:    r.Email,
+		ID:        strconv.FormatInt(user.ID, 10),
+		Username:  user.Username,
+		Email:     user.Email,
+		Avatar:    user.Avatar,
+		Bio:       user.Bio,
+		CreatedAt: user.CreatedAt,
 	}
 
 	return res, nil
 
 }
 
-
-
 func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, error) {
 	ctx, cancle := context.WithTimeout(c, s.timeout)
 	defer cancle()
-	u, err := s.Repository.GetUserByEmail(ctx, req.Email)
+	user, err := s.Repository.GetUserByEmail(ctx, req.Email)
 	if err != nil {
 		return &LoginUserRes{}, err
 	}
 
-	err = utils.CheckPassword(req.Password, u.Password)
+	err = utils.CheckPassword(req.Password, user.Password)
 	if err != nil {
 		return &LoginUserRes{}, err
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
-		ID:       strconv.Itoa(int(u.ID)),
-		Username: u.Username,
+		ID:       strconv.Itoa(int(user.ID)),
+		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    strconv.Itoa(int(u.ID)),
+			Issuer:    strconv.FormatInt(user.ID, 10),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
 	})
@@ -90,11 +94,83 @@ func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, er
 	if err != nil {
 		return &LoginUserRes{}, err
 	}
-	res := &LoginUserRes{AccessToken: ss, Username: u.Username, ID: strconv.Itoa(int(u.ID))}
+	res := &LoginUserRes{
+		AccessToken: ss,
+		Username:    user.Username,
+		ID:          strconv.FormatInt(user.ID, 10),
+		Email:       user.Email,
+		Avatar:      user.Avatar,
+		Bio:         user.Bio,
+		CreatedAt:   user.CreatedAt,
+	}
 	return res, nil
 }
 
+func (s *service) LoginWithFacebook(c context.Context, req *LoginUserWithFacebookReq) (*LoginUserWithFacebookRes, error) {
+	ctx, cancle := context.WithTimeout(c, s.timeout)
+	defer cancle()
 
+	token, err := database.AuthClient.VerifyIDToken(ctx, req.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	userRecord, err := database.AuthClient.GetUser(ctx, token.UID)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.Repository.GetUserByEmail(ctx, userRecord.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			user = &User{
+				Username: userRecord.DisplayName,
+				Email:    userRecord.Email,
+				Password: "",
+				Avatar:   userRecord.PhotoURL,
+				Bio:      "Hallo world",
+			}
+
+			user, err = s.Repository.CreateUser(ctx, user)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	if user.ID == 0 {
+		return nil, err
+	}
+
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+		ID:       strconv.FormatInt(user.ID, 10),
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    strconv.FormatInt(user.ID, 10),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	})
+
+	ss, err := jwtToken.SignedString([]byte(secretKey))
+	if err != nil {
+		return nil, err
+	}
+
+	res := &LoginUserWithFacebookRes{
+		AccessToken: ss,
+		ID:          strconv.FormatInt(user.ID, 10),
+		Username:    user.Username,
+		Email:       user.Email,
+		Avatar:      user.Avatar,
+		Bio:         user.Bio,
+		CreatedAt:   user.CreatedAt,
+	}
+
+	return res, nil
+
+}
 
 func (s *service) LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error) {
 
@@ -113,23 +189,31 @@ func (s *service) LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq
 
 	user, err := s.Repository.GetUserByEmail(ctx, userRecord.Email)
 	if err != nil {
-		user = &User{
-			Username: userRecord.DisplayName,
-			Email:    userRecord.Email,
-			Password: "",
-		}
+		if err == sql.ErrNoRows {
+			user = &User{
+				Username: userRecord.DisplayName,
+				Email:    userRecord.Email,
+				Password: "",
+				Avatar:   userRecord.PhotoURL,
+				Bio:      "Hallo world",
+			}
 
-		user, err = s.Repository.CreateUser(ctx, user)
-		if err != nil {
-			return nil, err
+			user, err = s.Repository.CreateUser(ctx, user)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
+	if user.ID == 0 {
+		return nil, err
+	}
+
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
-		ID:       strconv.Itoa(int(user.ID)),
+		ID:       strconv.FormatInt(user.ID, 10),
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    strconv.Itoa(int(user.ID)),
+			Issuer:    strconv.FormatInt(user.ID, 10),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
 	})
@@ -141,9 +225,12 @@ func (s *service) LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq
 
 	res := &LoginUserWithGoogleRes{
 		AccessToken: ss,
-		ID:          strconv.Itoa(int(user.ID)),
+		ID:          strconv.FormatInt(user.ID, 10),
 		Username:    user.Username,
 		Email:       user.Email,
+		Avatar:      user.Avatar,
+		Bio:         user.Bio,
+		CreatedAt:   user.CreatedAt,
 	}
 
 	return res, nil
