@@ -1,26 +1,20 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import LandingPage from "./pages/Landing";
-import { dynamicTitle } from "./utils/dynamicTitle";
 import { Toaster } from "./components/ui/sonner";
-import ChatPage from "./pages/Chat";
-import RoomPage from "./pages/Room";
+import { AppRouter } from "./routes/AppRouter";
+import { dynamicTitle } from "./utils/dynamicTitle";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   dynamicTitle();
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <div className="App">
         <Toaster />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/chat/:username" element={<RoomPage />} />
-          </Routes>
-        </BrowserRouter>
+        <AppRouter />
       </div>
-    </>
+    </QueryClientProvider>
   );
 }
 

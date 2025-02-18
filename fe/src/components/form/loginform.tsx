@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import loginSchema from "@/schema/loginSchema";
+import { useUserStore } from "@/store/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -8,6 +9,10 @@ import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { z } from "zod";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
+import axiosInstance from "@/utils/axiosInstance";
+import { ImFacebook } from "react-icons/im";
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
@@ -17,6 +22,9 @@ function LoginForm({
   setIsNewUser: (value: boolean) => void;
 }) {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const addUser = useUserStore((state) => state.addUser);
+
+  const { toast } = useToast();
 
   const container = {
     hidden: { opacity: 0 },
@@ -50,9 +58,30 @@ function LoginForm({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginFormInputs) => {
     console.log(data);
-    document.location.href = "/chat";
+    // document.location.href = "/chat";
+    try {
+      const res = await axiosInstance.post("/api/login", data);
+      if (res.status === 200) {
+        addUser(res.data);
+        document.location.href = "/chat";
+      } else {
+        toast({
+          title: "Login Gagal",
+          description: "Email atau Password Salah",
+          duration: 5000,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Login Gagal",
+        description: "An unexpected error occurred",
+        duration: 5000,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -154,6 +183,22 @@ function LoginForm({
           </p>
           <div className="bg-white border-2 border-zprimary group-hover:bg-hprimary rounded-md px-2 py-2 ease-in duration-300">
             <FaGoogle
+              size={24}
+              className="text-zprimary group-hover:text-white ease-in duration-300"
+            />
+          </div>
+        </button>
+      </motion.div>
+      <motion.div
+        variants={item}
+        className="flex w-full gap-4 items-center justify-center cursor-pointer"
+      >
+        <button className="flex w-full max-w-sm gap-2 group items-center justify-center">
+          <p className="bg-white border-2 border-zprimary group-hover:bg-hprimary text-zprimary group-hover:text-white font-medium rounded-md px-4 py-2 w-full ease-in duration-300">
+            Dengan Fesnuk
+          </p>
+          <div className="bg-white border-2 border-zprimary group-hover:bg-hprimary rounded-md px-2 py-2 ease-in duration-300">
+            <ImFacebook 
               size={24}
               className="text-zprimary group-hover:text-white ease-in duration-300"
             />

@@ -1,91 +1,73 @@
 import ChatBar from "@/components/chatbar/chatbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useSocket from "@/hooks/use-socket";
 import IndexLayout from "@/layout/IndexLayout";
-import { IoArrowBackSharp, IoSendSharp } from "react-icons/io5";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { useParams } from "react-router-dom";
+import { useUserStore } from "@/store/userStore";
 import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import ZBackground from "@/components/custom/zbackground";
-
-let socket: Socket = {} as Socket;
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { IoArrowBackSharp, IoSendSharp } from "react-icons/io5";
+import { useParams } from "react-router-dom";
 
 function RoomPage() {
   const { username } = useParams<{ username: string }>();
-  const [msg, setMsg] = useState<string>("");
+  // const socket = useSocket();
+  const [msg, setMsg] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [message, setMessage] = useState("");
+  const [roomID, setRoomID] = useState("");
 
-  const socketInitializer = async () => {
-    await fetch("/api/socket");
-    socket = io({
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
+  const user1 = useUserStore((state) => state.user?.username);
 
-    socket.on("connect", () => {
-      console.log("connected");
-    });
+  // useEffect(() => {
+  //   if (!socket || !user1 || !username) {
+  //     console.log(socket);
+  //     console.log(user1);
+  //     console.log(username);
+  //     console.log("Socket or user1 or username is not defined");
+  //     return;
+  //   };
 
-    socket.on("disconnect", () => {
-      console.log("disconnected");
-    });
+  //   const generatedRoomID = `${user1}_${username}`;
+  //   setRoomID(generatedRoomID);
+  //   socket.emit("join-room", { user1, user2: username });
 
-    socket.on(
-      "message",
-      (msg: { msg: string; timestamp: string; id: string }) => {
-        // setChat((prevChat) => [
-        //   ...prevChat,
-        //   {
-        //     msg: msg.msg,
-        //     timestamp: msg.timestamp,
-        //     isSender: false,
-        //   },
-        // ]);
-      }
-    );
-  };
+  //   socket.on("receive-message", (msg: string) => {
+  //     setMessages((prev) => [...prev, msg]);
+  //   });
+
+  //   return () => {
+  //     socket.off("receive-message");
+  //   };
+  // }, [socket, user1, username]);
 
   const scrollBottom = () => {
     const chatroom = document.getElementById("chatroom");
     chatroom?.scrollTo(0, chatroom.scrollHeight);
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
   };
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (socket && socket.connected) {
-      try {
-        socket.emit("message", {
-          msg: msg,
-          timestamp: new Date().toISOString(),
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setMsg("");
-        scrollBottom();
-      }
-    } else {
-      console.error("Socket is not connected");
+    if (!msg) {
+      console.log("Message is empty");
     }
+    // sendMessage();
+
+    scrollBottom();
   };
 
-  useEffect(() => {
-    socketInitializer();
-    scrollBottom();
-  }, []);
+  // const sendMessage = () => {
+  //   if (!socket || !roomID || !msg) return;
+  //   socket.emit("send-message", { roomID, message });
+  //   setMessage("");
+  // };
 
   return (
     <IndexLayout>
       <div className="flex flex-col justify-between h-screen overflow-hidden">
         <div className="p-2 rounded-md flex items-center gap-2 bg-zbase-100">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => window.location.replace("/chat")}
             className="flex items-center p-2"
           >
             <IoArrowBackSharp size={26} />
@@ -137,22 +119,21 @@ function RoomPage() {
             }}
           />
         </div>
-        <form onSubmit={onSubmitHandler}>
-          <div className="py-6 px-1 flex items-center gap-2">
-            <Input
-              placeholder="Type a message"
-              className="h-10"
-              type="text"
-              onChange={(e) => setMsg(e.target.value)}
-              value={msg}
-            />
-            <Button type="submit" className="h-10 bg-zprimary">
-              <IoSendSharp />
-            </Button>
-          </div>
-        </form>
-        <div className="relative h-10">
-            <ZBackground />
+        <div className="fixed w-[calc(100vw-32px)] bottom-0 bg-zbase-100">
+          <form onSubmit={onSubmitHandler}>
+            <div className="w-full py-4 px-1 flex items-center gap-2">
+              <Input
+                placeholder="Type a message"
+                className="h-10"
+                type="text"
+                onChange={(e) => setMsg(e.target.value)}
+                value={msg}
+              />
+              <Button type="submit" className="h-10 bg-zprimary">
+                <IoSendSharp />
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </IndexLayout>
