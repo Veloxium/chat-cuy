@@ -3,20 +3,19 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoutes } from "./ProtectedRoutes";
 import { PublicRoutes } from "./PublicRoutes";
 
-
 export const AppRouter = () => {
-  const user = useUserStore((state) => state.user) || true;
-  return (
-    <BrowserRouter>
-      <Routes>
-        {user ? (
-          <Route path="/*" element={<ProtectedRoutes />} />
-        ) : (
-          <Route path="/*" element={<PublicRoutes />} />
-        )}
+   const isAuthenticated = useUserStore((state) => state.authenticated);
+   return (
+      <BrowserRouter>
+         <Routes>
+            {isAuthenticated == true ? (
+               <Route path="/*" element={<ProtectedRoutes />} />
+            ) : (
+               <Route path="/*" element={<PublicRoutes />} />
+            )}
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+            <Route path="*" element={<Navigate to="/login" replace />} />
+         </Routes>
+      </BrowserRouter>
+   );
 };
