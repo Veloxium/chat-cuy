@@ -1,4 +1,4 @@
-import useSocket from "@/hooks/use-socket";
+import useSocket from "@/hooks/useSocket";
 import { useEffect, useState } from "react";
 import { Message } from "react-hook-form";
 

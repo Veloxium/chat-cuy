@@ -1,4 +1,4 @@
-import useSocket, { SOCKET_SERVER_URL } from "@/hooks/use-socket";
+import useSocket, { SOCKET_SERVER_URL } from "@/hooks/useSocket";
 import axios from "axios";
 import React, { useEffect } from "react";
 

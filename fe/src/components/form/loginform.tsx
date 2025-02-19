@@ -1,18 +1,19 @@
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/useToast";
 import loginSchema from "@/schema/loginSchema";
 import { useUserStore } from "@/store/userStore";
+import axiosInstance from "@/utils/axiosInstance";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
+import { ImFacebook } from "react-icons/im";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { z } from "zod";
-import axios from "axios";
-import { useToast } from "@/hooks/use-toast";
-import axiosInstance from "@/utils/axiosInstance";
-import { ImFacebook } from "react-icons/im";
+import { container, child } from "@/components/animation/oneonone";
+import { MdOutlineAccountCircle } from "react-icons/md";
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
@@ -25,30 +26,6 @@ function LoginForm({
   const addUser = useUserStore((state) => state.addUser);
 
   const { toast } = useToast();
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.5,
-        staggerChildren: 0.2,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        delayChildren: 0.5,
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-    exit: { opacity: 0 },
-  };
 
   const {
     register,
@@ -95,10 +72,10 @@ function LoginForm({
     >
       <div className="flex flex-col md:grid md:grid-cols-1 w-full gap-4">
         <div>
-          <motion.p variants={item} className="mb-2">
+          <motion.p variants={child} className="mb-2">
             Email
           </motion.p>
-          <motion.div variants={item}>
+          <motion.div variants={child}>
             <Input
               placeholder="Masukan Email"
               className={`h-10 ${errors.email ? "border-red-500" : ""}`}
@@ -112,10 +89,13 @@ function LoginForm({
           </motion.div>
         </div>
         <div>
-          <motion.p variants={item} className="mb-2">
+          <motion.p variants={child} className="mb-2">
             Password
           </motion.p>
-          <motion.div variants={item} className="relative place-content-center">
+          <motion.div
+            variants={child}
+            className="relative place-content-center"
+          >
             <Input
               placeholder="Masukan Password"
               type={isShowPassword ? "text" : "password"}
@@ -146,7 +126,7 @@ function LoginForm({
           </motion.div>
         </div>
       </div>
-      <motion.div variants={item}>
+      <motion.div variants={child}>
         <button
           type="submit"
           className="mt-2 flex w-full max-w-sm gap-2 items-center justify-center cursor-pointer"
@@ -157,24 +137,23 @@ function LoginForm({
         </button>
       </motion.div>
       <motion.div
-        variants={item}
+        variants={child}
         className="flex w-full gap-4 items-center justify-center cursor-pointer"
       >
         <button
           type="button"
           onClick={() => setIsNewUser(true)}
-          className="flex w-full max-w-sm gap-2 group items-center justify-center"
+          className="flex w-full max-w-sm gap-2 group items-center justify-end"
         >
-          <p className="bg-white border-2 border-zprimary group-hover:bg-hprimary text-zprimary group-hover:text-white font-medium rounded-md px-4 py-2 w-full ease-in duration-300">
-            Belum Punya Akun? Daftar
-          </p>
+          <p className="text-zprimary text-sm">Belum Punya Akun? Daftar</p>
+          <MdOutlineAccountCircle className="text-zprimary"/>
         </button>
       </motion.div>
-      <motion.div variants={item}>
+      <motion.div variants={child}>
         <Separator className="w-full max-w-sm" />
       </motion.div>
       <motion.div
-        variants={item}
+        variants={child}
         className="flex w-full gap-4 items-center justify-center cursor-pointer"
       >
         <button className="flex w-full max-w-sm gap-2 group items-center justify-center">
@@ -190,7 +169,7 @@ function LoginForm({
         </button>
       </motion.div>
       <motion.div
-        variants={item}
+        variants={child}
         className="flex w-full gap-4 items-center justify-center cursor-pointer"
       >
         <button className="flex w-full max-w-sm gap-2 group items-center justify-center">
@@ -198,7 +177,7 @@ function LoginForm({
             Dengan Fesnuk
           </p>
           <div className="bg-white border-2 border-zprimary group-hover:bg-hprimary rounded-md px-2 py-2 ease-in duration-300">
-            <ImFacebook 
+            <ImFacebook
               size={24}
               className="text-zprimary group-hover:text-white ease-in duration-300"
             />

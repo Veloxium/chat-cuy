@@ -3,12 +3,11 @@ import { Input } from "@/components/ui/input";
 import dataChatItem from "@/data/chatitem";
 import SideBarLayout from "@/layout/SideBarLayout";
 import { useUserStore } from "@/store/userStore";
-import axiosInstance from "@/utils/axiosInstance";
-import { useChat } from "@/utils/queryChat";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { useDebounce } from "use-debounce";
+import { motion } from "framer-motion";
+import { container, child } from "@/components/animation/oneonone";
 
 function ChatPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,9 +31,8 @@ function ChatPage() {
     setSearchTerm(e.target.value);
   };
 
-
   return (
-    <SideBarLayout>
+    <div>
       <p className="text-4xl font-forta">Chats</p>
       <div className="relative mt-4">
         <Input
@@ -45,12 +43,20 @@ function ChatPage() {
         />
         <CiSearch size={24} className="absolute top-[6px] left-2 " />
       </div>
-      <div className="flex flex-col space-y-2 mt-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        exit="exit"
+        className="flex flex-col space-y-2 mt-4"
+      >
         {chats.map((item: any) => (
-          <ChatItem key={item.id} items={item} />
+          <motion.div variants={child} key={item.id}>
+            <ChatItem items={item} />
+          </motion.div>
         ))}
-      </div>
-    </SideBarLayout>
+      </motion.div>
+    </div>
   );
 }
 

@@ -1,16 +1,17 @@
 import ZBackground from "@/components/custom/zbackground";
 import IndexLayout from "@/layout/IndexLayout";
-import React from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   IoChatbubbleEllipsesOutline,
   IoPeopleOutline,
   IoSettingsOutline,
 } from "react-icons/io5";
 import { LuCircleDotDashed } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-function SideBarLayout({ children }: { children: React.ReactNode }) {
-  const urlpath = window.location.pathname;
+function SideBarLayout({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const urlpath = location.pathname;
 
   const options = [
     {
@@ -46,7 +47,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
           {options.map((item, index) => (
             <Link to={item.path} key={index}>
               <div
-                className={`border border-slate-300 my-6 w-10 h-10 place-items-center place-content-center rounded-md ${
+                className={`border border-slate-300 my-6 w-10 h-10 place-items-center place-content-center rounded-md ease-in-out duration-300 ${
                   urlpath === item.path ? "bg-zprimary" : ""
                 }`}
               >
@@ -64,7 +65,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-      <div className="h-screen flex-1 py-4 bg-zbase-100 overflow-y-scroll no-scrollbar">
+      <div className="h-screen overflow-hidden flex-1 py-4 bg-zbase-100 overflow-y-scroll no-scrollbar">
         <IndexLayout>{children}</IndexLayout>
       </div>
     </div>

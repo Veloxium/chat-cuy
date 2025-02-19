@@ -1,7 +1,7 @@
 import ChatBar from "@/components/chatbar/chatbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useSocket from "@/hooks/use-socket";
+import useSocket from "@/hooks/useSocket";
 import IndexLayout from "@/layout/IndexLayout";
 import { useUserStore } from "@/store/userStore";
 import { useEffect, useState } from "react";
@@ -63,11 +63,17 @@ function RoomPage() {
   // };
 
   return (
-    <IndexLayout>
+    <div>
       <div className="flex flex-col justify-between h-screen overflow-hidden">
         <div className="p-2 rounded-md flex items-center gap-2 bg-zbase-100">
           <button
-            onClick={() => window.location.replace("/chat")}
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.replace("/chat");
+              }
+            }}
             className="flex items-center p-2"
           >
             <IoArrowBackSharp size={26} />
@@ -82,7 +88,8 @@ function RoomPage() {
             <div className="flex-1 flex justify-between">
               <div className="flex flex-1 flex-col">
                 <p className="text-lg font-semibold capitalize">{username}</p>
-                <p className="text-sm">Serabutan Ngoding</p>
+                {/* Bio User */}
+                <p className="text-sm line-clamp-1">Serabutan Ngoding</p>
               </div>
               <div className="flex items-center p-2">
                 <BsThreeDotsVertical size={26} />
@@ -136,7 +143,7 @@ function RoomPage() {
           </form>
         </div>
       </div>
-    </IndexLayout>
+    </div>
   );
 }
 
