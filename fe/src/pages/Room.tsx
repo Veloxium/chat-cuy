@@ -126,7 +126,7 @@ function RoomPage() {
             }}
           />
         </div>
-        <div className="fixed w-[calc(100vw-32px)] bottom-0 bg-zbase-100">
+        <div className="fixed w-[calc(100vw-80px)] bottom-0 bg-zbase-100">
           <form onSubmit={onSubmitHandler}>
             <div className="w-full py-4 px-1 flex items-center gap-2">
               <Input

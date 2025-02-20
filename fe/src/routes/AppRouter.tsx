@@ -5,11 +5,11 @@ import { PublicRoutes } from "./PublicRoutes";
 
 
 export const AppRouter = () => {
-  const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user || true);
   return (
     <BrowserRouter>
       <Routes>
-        {user?.username ? (
+        {user? (
           <Route path="/*" element={<ProtectedRoutes />} />
         ) : (
           <Route path="/*" element={<PublicRoutes />} />

@@ -4,6 +4,7 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import { useDebounce } from "use-debounce";
 import { MdOutlinePersonAdd } from "react-icons/md";
 import { LoaderCircle } from "lucide-react";
+import { CiAt } from "react-icons/ci";
 
 function AddContactPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +52,7 @@ function AddContactPage() {
         <div className="relative w-full h-full">
           <Input
             placeholder="Masukan Username"
-            className={`h-10`}
+            className={`h-10 pl-10`}
             onChange={handleSearchChange}
           />
           {isError && (
@@ -62,6 +63,12 @@ function AddContactPage() {
           {isLoad && (
             <LoaderCircle className="animate-spin absolute text-zprimary right-4 top-2" />
           )}
+          <CiAt
+            className={`absolute left-2 top-2 ${
+              isError || search == "" ? "" : "text-zprimary"
+            }`}
+            size={24}
+          />
         </div>
         <div className="mt-4">
           <button
