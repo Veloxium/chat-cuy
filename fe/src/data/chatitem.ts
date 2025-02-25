@@ -1,11 +1,11 @@
 const dataChatItem = [
     {
         "id": 1,
-        "name": "Alexandra",
+        "name": "Dellaaaa",
         "message": {
-            "text": "Anjaayy bang",
+            "text": "Sayangggku",
             "timestamp": "2021-01-01T12:00:00Z",
-            "sender_id": 2
+            "sender_id": 1
         },
         "image": "https://api.dicebear.com/9.x/adventurer/svg?seed=Jude"
     },

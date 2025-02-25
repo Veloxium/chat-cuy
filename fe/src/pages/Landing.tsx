@@ -14,10 +14,10 @@ const textList = [
 ];
 
 function LandingPage() {
-  const [textIndex, setTextIndex] = useState(0);
-  const [displayText, setDisplayText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
+  const [textIndex, setTextIndex] = useState<number>(0);
+  const [displayText, setDisplayText] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [isNewUser, setIsNewUser] = useState<boolean>(false);
 
   useEffect(() => {
     const currentText = textList[textIndex];

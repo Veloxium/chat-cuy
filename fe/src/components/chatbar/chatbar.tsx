@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import { child } from "@/components/animation/oneonone";
+
 interface ChatBarProps {
   id: number;
   msg: { msg: string; timestamp: string; isSender: boolean };
@@ -12,7 +15,8 @@ const formattedTime = (timestamp: string) =>
 
 function ChatBar(items: ChatBarProps) {
   return (
-    <div
+    <motion.div
+      variants={child}
       key={items.id}
       className={`flex ${items.msg.isSender ? "justify-end" : "justify-start"}`}
     >
@@ -30,10 +34,12 @@ function ChatBar(items: ChatBarProps) {
         />
         <div className="bg-zprimary text-white px-2 py-2 rounded-xl flex items-end gap-2">
           <p>{items.msg.msg}</p>
-          <p className="text-[10px] text-slate-300">{formattedTime(items.msg.timestamp)}</p>
+          <p className="text-[10px] text-slate-300">
+            {formattedTime(items.msg.timestamp)}
+          </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

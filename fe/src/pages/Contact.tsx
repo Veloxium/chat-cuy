@@ -9,8 +9,17 @@ import ZBackground from "@/components/custom/zbackground";
 function ContactPage() {
   return (
     <div>
-      <div className="relative">
-        <p className="text-4xl font-forta">List Contact</p>
+      <div className="relative md:max-w-96">
+        <div className="flex">
+          <p className="text-4xl font-forta">List Contact</p>
+          <Link className="hidden md:block" to="/addcontact">
+            <button className="relative z-10 overflow-hidden border-2 border-dashed border-zprimary py-2 px-4 flex justify-center items-center gap-1 rounded-lg text-white">
+              <ZBackground />
+              <FaUserPlus size={20} />
+              <p className="font-semibold">Add</p>
+            </button>
+          </Link>
+        </div>
         <motion.div
           variants={container}
           initial="hidden"
@@ -37,7 +46,7 @@ function ContactPage() {
             </motion.div>
           ))}
         </motion.div>
-        <div className="fixed bottom-8 right-20">
+        <div className="md:hidden fixed bottom-8 right-20">
           <Link to="/addcontact">
             <button className="relative z-10 overflow-hidden border-2 border-dashed border-zprimary py-2 px-4 flex justify-center items-center gap-1 rounded-lg text-white">
               <ZBackground />
