@@ -2,7 +2,10 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -11,9 +14,14 @@ type Database struct {
 }
 
 func NewDatabaseConn() (*Database, error) {
-	driverName := "postgres"
-	dataSource := "postgresql://root:24434@localhost:5432/go-websocket-sesat?sslmode=disable"
-	db, err := sql.Open(driverName, dataSource)
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("failed to load environment")
+	}
+
+	dataSource := os.Getenv("DATABASE_CONNECTION")
+
+	db, err := sql.Open("postgres", dataSource)
 	if err != nil {
 		return nil, err
 	}
