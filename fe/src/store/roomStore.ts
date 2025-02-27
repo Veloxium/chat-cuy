@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type RoomType = {
     id: number
@@ -15,18 +14,12 @@ type RoomStore = {
 }
 
 
-export const useRoomStore = create<RoomStore>()(
-    persist(
-        (set) => (
-            {
-                room: undefined,
-                addRoom: (room: RoomType) => set({ room: room }),
-                clearRoom: () => set({ room: undefined }),
-            }
-        ),
-        {
-            name: 'room-storage',
-            storage: createJSONStorage(() => localStorage),
-        },
-    ),
+export const useRoomStore = create<RoomStore>()((set) => (
+    {
+        room: undefined,
+        addRoom: (room: RoomType) => set({ room: room }),
+        clearRoom: () => set({ room: undefined }),
+    }
+),
+
 )

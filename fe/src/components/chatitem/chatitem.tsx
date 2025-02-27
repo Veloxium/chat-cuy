@@ -27,10 +27,10 @@ function ChatItem({ items }: ChatItemsProps) {
   }
   return (
     <div className="p-2 rounded-md flex items-center gap-2 hover:bg-white">
-      <div className="w-16 h-16 rounded-full border relative overflow-hidden bg-white">
+      <div className="place-content-center w-16 h-16 rounded-full border relative overflow-hidden bg-white">  
         <img src={items.image} alt="avatar" />
       </div>
-      <div onClick={addRoomHandler} className="flex-1">
+      <button onClick={addRoomHandler} className="flex-1 cursor-pointer">
         <div className="flex-1 flex flex-col">
           <div className="flex justify-between">
             <p className="text-lg font-semibold">{items.name}</p>
@@ -39,7 +39,7 @@ function ChatItem({ items }: ChatItemsProps) {
           <div className="flex justify-start">
             <div className="flex justify-start">
               <div className="w-[140px]">
-                <p className="line-clamp-1">
+                <p className="line-clamp-1 text-left break-all">
                   {items.message.sender_id === 1
                     ? "Anda: " + items.message.text
                     : items.message.text}
@@ -48,7 +48,7 @@ function ChatItem({ items }: ChatItemsProps) {
             </div>
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 }

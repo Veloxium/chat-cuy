@@ -38,13 +38,13 @@ function ChatPage() {
         <Input
           type="search"
           placeholder="Search"
-          className="pl-10"
+          className="pl-10 h-10"
           onChange={handleSearchChange}
         />
-        <CiSearch size={24} className="absolute top-[6px] left-2 " />
+        <CiSearch size={24} className="absolute top-[8px] left-2 " />
       </div>
       <motion.div
-        variants={container}
+        variants={container()}
         initial="hidden"
         animate="show"
         exit="exit"

@@ -1,17 +1,22 @@
+import { container } from "@/components/animation/oneonone";
 import ChatBar from "@/components/chatbar/chatbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { RoomType } from "@/store/roomStore";
 import { useUserStore } from "@/store/userStore";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { IoCloseCircle, IoSendSharp } from "react-icons/io5";
-import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { container } from "@/components/animation/oneonone";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoSendSharp } from "react-icons/io5";
+import { MdBlock } from "react-icons/md";
 
 function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
-  const { username } = useParams<{ username: string }>();
   // const socket = useSocket();
   const [msg, setMsg] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
@@ -73,7 +78,7 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
             }}
             className="flex items-center p-2"
           >
-            <IoCloseCircle size={28} className="text-red-500" />
+            <IoIosArrowBack size={28} />
           </button>
           <div className="w-16 h-16 rounded-full border relative overflow-hidden bg-white">
             <img src={item.avatar} alt="avatar" className="w-16 h-16" />
@@ -88,20 +93,30 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
                 <p className="text-sm line-clamp-1">Serabutan Ngoding</p>
               </div>
               <div className="flex items-center p-2">
-                <BsThreeDotsVertical size={26} />
+                <Popover>
+                  <PopoverTrigger>
+                    <BsThreeDotsVertical size={26} />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <button className="flex items-center gap-1 px-5 py-3 rounded-md text-red-500 hover:text-white hover:bg-red-500">
+                      <p>Blokir</p>
+                      <MdBlock />
+                    </button>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </div>
         </div>
         <motion.div
           id="chatroom"
-          variants={container}
+          variants={container(true)}
           initial="hidden"
           animate="show"
           exit="exit"
-          className="no-scrollbar w-full flex-1 flex flex-col rounded-md gap-2 overflow-y-scroll mt-2"
+          className="no-scrollbar w-full flex-1 flex flex-col rounded-md gap-4 overflow-y-scroll mt-2"
         >
-          <div className="h-6" />
+          <div className="h-2" />
           <ChatBar
             id={1}
             msg={{
@@ -130,7 +145,7 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
         <div className="fixed md:relative w-[calc(100%-5rem)] md:w-full bottom-4 flex items-center gap-2">
           <Input
             placeholder="Type a message"
-            className="bg-white h-10"
+            className="bg-white h-12 pl-4"
             type="text"
             onChange={(e) => setMsg(e.target.value)}
             value={msg}

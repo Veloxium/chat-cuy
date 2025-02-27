@@ -32,7 +32,7 @@ function ChatBar(items: ChatBarProps) {
               : "left-1 -rotate-[65deg]"
           }`}
         />
-        <div className="bg-zprimary text-white px-2 py-2 rounded-xl flex items-end gap-2">
+        <div className="bg-zprimary text-white px-4 py-3 rounded-xl flex items-end gap-2">
           <p>{items.msg.msg}</p>
           <p className="text-[10px] text-slate-300">
             {formattedTime(items.msg.timestamp)}
