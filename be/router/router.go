@@ -15,8 +15,7 @@ var app *gin.Engine
 
 func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler) {
 	app = gin.Default()
-
-	app.Use(gin.Logger())
+	app.Use(protected.Logger())
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
