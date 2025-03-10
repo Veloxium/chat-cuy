@@ -74,7 +74,6 @@ type LoginUserWithFacebookRes struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
 
-
 type Repository interface {
 	CreateUser(ctx context.Context, user *User) (*User, error)
 	GetUserByEmail(ctx context.Context, email string) (*User, error)

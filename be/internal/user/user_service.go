@@ -11,9 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-const (
-	secretKey = "sholatlimawaktu24434"
-)
+var secretKey = utils.LoadENV("JWTSECRETKEY")
 
 type MyJWTClaims struct {
 	ID       string `json:"id"`
