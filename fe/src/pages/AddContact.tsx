@@ -39,7 +39,7 @@ function AddContactPage() {
       <div className="flex items-center">
         <button
           onClick={() => {
-            window.location.replace("/contact");
+            window.history.back();
           }}
           className="flex items-center p-2"
         >

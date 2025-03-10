@@ -1,5 +1,6 @@
 import { child, container } from "@/components/animation/oneonone";
 import ZBackground from "@/components/custom/zbackground";
+import { dataStoryItem, StoryItem } from "@/data/storyitem";
 import { useRoomStore } from "@/store/roomStore";
 import { useStoryStore } from "@/store/storyStore";
 import { motion } from "framer-motion";
@@ -9,12 +10,8 @@ function StoryPage() {
   const clearRoom = useRoomStore((state) => state.clearRoom);
   const addStory = useStoryStore((state) => state.addStory);
 
-  const handleStory = () => {
-    addStory({
-      id: 1,
-      username: "Sigma",
-      url: "https://i.pinimg.com/736x/5b/8e/b5/5b8eb524dc01b7201d50df40b4034f7e.jpg",
-    });
+  const handleStory = (item : StoryItem) => {
+    addStory(item);
     clearRoom();
   };
   return (
@@ -36,14 +33,22 @@ function StoryPage() {
           </div>
           <FaPlus size={26} className="text-white" />
         </motion.button>
-        {Array.from({ length: 9 }).map((_, i) => (
+        {dataStoryItem.map((item, i) => (
           <motion.button
-            onClick={handleStory}
+            onClick={() => handleStory(item)}
             variants={child}
             key={i}
-            className="w-full aspect-square place-content-center place-items-center text-center rounded-md bg-yellow-500"
+            className="relative overflow-hidden w-full aspect-square flex justify-center items-center text-center rounded-md bg-black"
           >
-            Story {i + 1}
+            <img
+              src={item.url}
+              alt="story"
+              loading="lazy"
+            />
+            <div className="bg-black w-full h-full absolute bg-opacity-25" />
+            <p className="text-white absolute top-2 left-2 font-semibold">
+              Username
+            </p>
           </motion.button>
         ))}
       </motion.div>

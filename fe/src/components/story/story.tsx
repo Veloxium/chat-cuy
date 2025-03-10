@@ -56,7 +56,8 @@ function Story() {
             </button>
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white">
               <img
-                src="https://api.dicebear.com/9.x/adventurer/svg?seed=Brian"
+                src={story?.avatar}
+                alt="avatar"
                 className="object-cover"
               />
             </div>
@@ -77,15 +78,14 @@ function Story() {
           className={`h-1 bg-white`}
         />
       </div>
-      <div className="fixed bg-black bg-opacity-15 w-[calc(100%-3rem)] md:absolute bottom-4">
-        <div className="flex items-center gap-2 p-4">
+      <div className="fixed bg-black bg-opacity-15 w-[calc(100%-3rem)] md:absolute bottom-0 px-4 pb-4 pt-2">
+        <p className="text-center text-white mb-2">{story?.text}</p>
+        <div className="flex items-center gap-2">
           <div className="w-full bg-white bg-opacity-25 rounded-lg group">
             <Input
               placeholder="Type a message"
               className="h-10 pl-4 group-focus-within:bg-white rounded-lg"
               type="text"
-              // onChange={(e) => setMsg(e.target.value)}
-              // value={msg}
             />
           </div>
           <Button className="w-20 h-10 bg-zprimary rounded-md place-content-center place-items-center">
