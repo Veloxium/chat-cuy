@@ -1,8 +1,8 @@
 package router
 
 import (
+	"database/sql"
 	"time"
-
 	"github.com/Gylmynnn/websocket-sesat/internal/contact"
 	"github.com/Gylmynnn/websocket-sesat/internal/user"
 	"github.com/Gylmynnn/websocket-sesat/internal/websocket"
@@ -11,12 +11,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// initialzed gin engine
 var app *gin.Engine
 
-func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler) {
+// initialzed router function
+func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler) {
 	app = gin.Default()
-	app.Use(protected.Logger())
 
+    // wrap route with logger
+	app.Use(protected.Logger(db))
+
+    // app cors
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT"},
@@ -28,17 +33,21 @@ func InitRouter(userHandler *user.Handler, wsHandler *websocket.Handler, contact
 		},
 		MaxAge: 12 * time.Hour,
 	}))
-	app.POST("/signup", userHandler.CreateUser)
-	app.POST("/login", userHandler.Login)
-	app.POST("/withgoogle", userHandler.LoginWithGoogle)
-	app.POST("/withfacebook", userHandler.LoginWithFacebook)
-	app.GET("/logout", userHandler.Logout)
 
+    // user authentication route handler 
+	app.POST("/api/signup", userHandler.CreateUser)
+	app.POST("/api/login", userHandler.Login)
+	app.POST("/api/withgoogle", userHandler.LoginWithGoogle)
+	app.POST("/api/withfacebook", userHandler.LoginWithFacebook)
+	app.GET("/api/logout", userHandler.Logout)
+
+    // protected route with jwt
 	authApp := app.Group("/")
 	authApp.Use(protected.JWTAuthMiddleware())
+	// contact route handler
+	authApp.POST("/api/contact", contactHandler.AddContact)
 
-	authApp.POST("/contact", contactHandler.AddContact)
-
+	// websocket route handler
 	authApp.POST("/ws/createRoom", wsHandler.CreateRoom)
 	authApp.GET("/ws/joinRoom/:roomId", wsHandler.JoinRoom)
 	authApp.GET("/ws/getRooms", wsHandler.GetRooms)
