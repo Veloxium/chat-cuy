@@ -3,21 +3,14 @@ package user
 import (
 	"context"
 	"database/sql"
-	"strconv"
-	"time"
-
 	"github.com/Gylmynnn/websocket-sesat/database"
 	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
+	"strconv"
+	"time"
 )
 
 var secretKey = utils.LoadENV("JWTSECRETKEY")
-
-type MyJWTClaims struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
 
 type service struct {
 	Repository
@@ -79,7 +72,7 @@ func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, er
 		return &LoginUserRes{}, err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, utils.MyJWTClaims{
 		ID:       strconv.Itoa(int(user.ID)),
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -142,7 +135,7 @@ func (s *service) LoginWithFacebook(c context.Context, req *LoginUserWithFaceboo
 		return nil, err
 	}
 
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, utils.MyJWTClaims{
 		ID:       strconv.FormatInt(user.ID, 10),
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -207,7 +200,7 @@ func (s *service) LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq
 		return nil, err
 	}
 
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, utils.MyJWTClaims{
 		ID:       strconv.FormatInt(user.ID, 10),
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
