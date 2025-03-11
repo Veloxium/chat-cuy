@@ -46,6 +46,7 @@ type GetContactsWithUserRes struct {
 	Contacts  []Contact `json:"contacts" db:"contacts"`
 }
 
+
 type Repository interface {
 	AddContact(ctx context.Context, contact *Contact) (*Contact, error)
 	DeleteContact(ctx context.Context, contactID int64) error
