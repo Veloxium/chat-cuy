@@ -1,20 +1,13 @@
 package protected
 
 import (
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"net/http"
+	"strings"
+	"time"
 )
-
-type MyJWTClaims struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	jwt.RegisteredClaims
-}
 
 var secretKey = utils.LoadENV("JWTSECRETKEY")
 
@@ -22,6 +15,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var getToken string
 
+		// get authorization from header
 		authHeader := c.GetHeader("Authorization")
 		if authHeader != "" {
 			tokenFormat := strings.Split(authHeader, " ")
@@ -48,7 +42,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(getToken, &MyJWTClaims{}, func(t *jwt.Token) (any, error) {
+		token, err := jwt.ParseWithClaims(getToken, &utils.MyJWTClaims{}, func(t *jwt.Token) (any, error) {
 			return []byte(secretKey), nil
 		})
 		if err != nil {
@@ -61,7 +55,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if claims, ok := token.Claims.(*MyJWTClaims); ok && token.Valid {
+		if claims, ok := token.Claims.(*utils.MyJWTClaims); ok && token.Valid {
 			if claims.ExpiresAt.Before(time.Now()) {
 				c.JSON(http.StatusUnauthorized, utils.ResFormatter{
 					Success:    false,
