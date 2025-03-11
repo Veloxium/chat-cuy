@@ -2,23 +2,16 @@ package contact
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/Gylmynnn/websocket-sesat/internal/user"
+	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
 )
 
-type DBTX interface {
-	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
-	PrepareContext(context.Context, string) (*sql.Stmt, error)
-	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
-	QueryRowContext(context.Context, string, ...any) *sql.Row
-}
-
 type repository struct {
-	db DBTX
+	db utils.DBTX
 }
 
-func NewRepository(db DBTX) Repository {
+func NewRepository(db utils.DBTX) Repository {
 	return &repository{
 		db: db,
 	}
