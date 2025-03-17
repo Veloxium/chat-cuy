@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
+	"github.com/Gylmynnn/websocket-sesat/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -125,7 +125,7 @@ func (h *Handler) LoginWithGoogle(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.ResFormatter{
 		Success:    true,
 		StatusCode: http.StatusOK,
-		Message:    "login successfully with google",
+		Message:    "login with google successfully",
 		Data:       newResponse,
 	})
 
@@ -168,7 +168,7 @@ func (h *Handler) LoginWithFacebook(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.ResFormatter{
 		Success:    true,
 		StatusCode: http.StatusOK,
-		Message:    "login successfully with google",
+		Message:    "login with facebook successfully",
 		Data:       newResponse,
 	})
 
