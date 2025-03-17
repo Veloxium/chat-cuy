@@ -2,9 +2,8 @@ package contact
 
 import (
 	"context"
-
 	"github.com/Gylmynnn/websocket-sesat/internal/user"
-	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
+	"github.com/Gylmynnn/websocket-sesat/utils"
 )
 
 type repository struct {
@@ -17,8 +16,44 @@ func NewRepository(db utils.DBTX) Repository {
 	}
 }
 
+func (r *repository) GetContactByID(ctx context.Context, contactID int64) error {
+	query := `SELECT id, user_id, username, avatar, created_at
+    FROM contacts WHERE id = $1 AND deleted_at IS NULL
+    `
+	c := Contact{}
+	err := r.db.QueryRowContext(ctx, query, contactID).Scan(&c.ID, &c.UserId, &c.Username, &c.Avatar, &c.CreatedAt)
+	return err
+
+}
+
+func (r *repository) GetAllContacts(ctx context.Context) ([]GetContactsRes, error) {
+	query := `SELECT id, user_id, username, avatar, created_at 
+    FROM contacts WHERE deleted_at IS NULL`
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var contacts []GetContactsRes
+	for rows.Next() {
+		var c GetContactsRes
+		err := rows.Scan(&c.ID, &c.UserId, &c.Username, &c.Avatar, &c.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		contacts = append(contacts, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return contacts, nil
+}
+
 func (r *repository) AddContact(ctx context.Context, contact *Contact) (*Contact, error) {
-	query := "INSERT INTO contacts (user_id, username, avatar, created_at) VALUES ($1,$2,$3, NOW()) RETURNING id , created_at"
+	query := `INSERT INTO contacts (user_id, username, avatar, created_at)
+    VALUES ($1,$2,$3, NOW()) RETURNING id , created_at`
 	err := r.db.QueryRowContext(ctx, query, contact.UserId, contact.Username, contact.Avatar).Scan(&contact.ID, &contact.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -29,15 +64,12 @@ func (r *repository) AddContact(ctx context.Context, contact *Contact) (*Contact
 }
 
 func (r *repository) DeleteContact(ctx context.Context, contactID int64) error {
-
 	query := "UPDATE contacts SET deleted_at = NOW() WHERE id = $1"
 	_, err := r.db.ExecContext(ctx, query, contactID)
 	return err
-
 }
 
 func (r *repository) GetContactWithUser(ctx context.Context, userId int64) (*GetContactsWithUserRes, error) {
-
 	query := `
       SELECT
          u.id, u.username, u.email, u.avatar, u.bio, u.created_at,
@@ -54,11 +86,11 @@ func (r *repository) GetContactWithUser(ctx context.Context, userId int64) (*Get
 
 	defer rows.Close()
 
-	var user user.User
+	user := user.User{}
 	contacts := []Contact{}
 
 	for rows.Next() {
-		var c Contact
+		c := Contact{}
 		err := rows.Scan(
 			&user.ID, &user.Username, &user.Email, &user.Avatar, &user.Bio,
 			&user.CreatedAt, &c.ID, &c.Username, &c.Avatar, &c.CreatedAt,
