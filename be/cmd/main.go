@@ -12,13 +12,14 @@ import (
 func main() {
 
 	dbConn := database.NewDatabaseConn()
+	getDB := dbConn.GetDB()
 	database.InitFirebase()
 
-	userRepository := user.NewRepository(dbConn.GetDB())
+	userRepository := user.NewRepository(getDB)
 	userService := user.NewService(userRepository)
 	userHandler := user.NewHundler(userService)
 
-	contactRepository := contact.NewRepository(dbConn.GetDB())
+	contactRepository := contact.NewRepository(getDB)
 	contactService := contact.NewService(contactRepository)
 	contactHandler := contact.NewHundler(contactService)
 
@@ -26,8 +27,10 @@ func main() {
 	wsHandler := websocket.NewHandler(hub)
 	go hub.Run()
 
-	router.InitRouter(dbConn.GetDB(), userHandler, wsHandler, contactHandler)
-	router.Start("0.0.0.0:8080")
+	router.InitRouter(getDB, userHandler, wsHandler, contactHandler)
+	if err := router.Start("localhost:8080"); err != nil {
+		fmt.Println("error when running server")
+	}
 	fmt.Println("server running on port : 8080")
 
 }
