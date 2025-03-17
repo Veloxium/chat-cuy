@@ -3,11 +3,12 @@ package user
 import (
 	"context"
 	"database/sql"
-	"github.com/Gylmynnn/websocket-sesat/database"
-	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
-	"github.com/golang-jwt/jwt/v5"
 	"strconv"
 	"time"
+
+	"github.com/Gylmynnn/websocket-sesat/database"
+	"github.com/Gylmynnn/websocket-sesat/utils"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var secretKey = utils.LoadENV("JWTSECRETKEY")
@@ -158,7 +159,6 @@ func (s *service) LoginWithFacebook(c context.Context, req *LoginUserWithFaceboo
 		Bio:         user.Bio,
 		CreatedAt:   user.CreatedAt,
 	}
-
 	return res, nil
 
 }
