@@ -2,13 +2,13 @@ package router
 
 import (
 	"database/sql"
-	"time"
 	"github.com/Gylmynnn/websocket-sesat/internal/contact"
 	"github.com/Gylmynnn/websocket-sesat/internal/user"
 	"github.com/Gylmynnn/websocket-sesat/internal/websocket"
 	"github.com/Gylmynnn/websocket-sesat/protected"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 // initialzed gin engine
@@ -18,10 +18,10 @@ var app *gin.Engine
 func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler) {
 	app = gin.Default()
 
-    // wrap route with logger
+	// wrap route with logger
 	app.Use(protected.Logger(db))
 
-    // app cors
+	// app cors
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT"},
@@ -34,18 +34,20 @@ func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Hand
 		MaxAge: 12 * time.Hour,
 	}))
 
-    // user authentication route handler 
-	app.POST("/api/signup", userHandler.CreateUser)
-	app.POST("/api/login", userHandler.Login)
-	app.POST("/api/withgoogle", userHandler.LoginWithGoogle)
-	app.POST("/api/withfacebook", userHandler.LoginWithFacebook)
+	// user authentication route handler
+	app.POST("/api/register", userHandler.CreateUser)
+	app.POST("/api/login/default", userHandler.Login)
+	app.POST("/api/login/google", userHandler.LoginWithGoogle)
+	app.POST("/api/login/facebook", userHandler.LoginWithFacebook)
 	app.GET("/api/logout", userHandler.Logout)
 
-    // protected route with jwt
+	// protected route with jwt
 	authApp := app.Group("/")
 	authApp.Use(protected.JWTAuthMiddleware())
 	// contact route handler
 	authApp.POST("/api/contact", contactHandler.AddContact)
+	authApp.PUT("/api/contact/:id", contactHandler.DeleteContact)
+	authApp.GET("/api/contacts", contactHandler.GetAllContacts)
 
 	// websocket route handler
 	authApp.POST("/ws/createRoom", wsHandler.CreateRoom)
