@@ -1,7 +1,7 @@
 package protected
 
 import (
-	"github.com/Gylmynnn/websocket-sesat/pkg/utils"
+	"github.com/Gylmynnn/websocket-sesat/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
