@@ -46,14 +46,22 @@ type GetContactsWithUserRes struct {
 	Contacts  []Contact `json:"contacts" db:"contacts"`
 }
 
-
 type Repository interface {
-	AddContact(ctx context.Context, contact *Contact) (*Contact, error)
-	DeleteContact(ctx context.Context, contactID int64) error
-	GetContactWithUser(ctx context.Context, userId int64) (*GetContactsWithUserRes, error)
-	GetContactByUserId(ctx context.Context, userID int64) ([]Contact, error)
+	AddContact(c context.Context, contact *Contact) (*Contact, error)
+	DeleteContact(c context.Context, contactID int64) error
+	GetAllContacts(c context.Context) ([]GetContactsRes, error)
+	GetContactByID(c context.Context, contactID int64) error
+	GetContactWithUser(c context.Context, userId int64) (*GetContactsWithUserRes, error)
+	GetContactByUserId(c context.Context, userID int64) ([]Contact, error)
 }
 
 type Service interface {
 	AddContact(c context.Context, req *CreateContactReq) (*CreateContactRes, error)
+	DeleteContact(c context.Context, contactID int64) error
+	GetAllContacts(c context.Context) ([]GetContactsRes, error)
+	GetContactByID(c context.Context, contactID int64) (*GetContactsRes, error)
+	// GetContactsByUserID(c context.Context, userID int64) ([]GetContactsRes, error)
+	// UpdateContact(c context.Context, contactID int64, req *CreateContactReq) (*CreateContactRes, error)
+	// GetContactWithUser(c context.Context, userID int64) (*GetContactsWithUserRes, error)
+
 }
