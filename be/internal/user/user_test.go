@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 	"github.com/Gylmynnn/websocket-sesat/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 type MockUserService struct {
@@ -65,7 +65,7 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	userRes := &CreateUserRes{
-		ID:       "1",
+		ID:       "6106c1afe1ad4af499724087",
 		Username: "anomaly",
 		Email:    "anomaly24434@gmail.com",
 	}
@@ -99,7 +99,7 @@ func TestLogin(t *testing.T) {
 	handler := NewHundler(mockService)
 
 	loginReq := LoginUserReq{
-		Email: "anomaly24434@gmail.com",
+		Email:    "anomaly24434@gmail.com",
 		Password: "anomaly24434",
 	}
 
