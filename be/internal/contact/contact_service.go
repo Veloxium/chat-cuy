@@ -18,6 +18,14 @@ func NewService(repository Repository) Service {
 }
 
 func (s *service) GetContactByID(c context.Context, contactID int64) (*GetContactsRes, error) {
+	ctx, cancle := context.WithTimeout(c, s.timeout)
+	defer cancle()
+
+	contact, err := s.Repository.GetContactByID(ctx, contactID)
+	if err != nil {
+		return nil, err
+	}
+	return contact, nil
 
 }
 
