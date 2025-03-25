@@ -6,14 +6,16 @@ import (
 )
 
 type User struct {
-	ID        int64      `json:"id" db:"id"`
-	Username  string     `json:"username" db:"username"`
-	Email     string     `json:"email" db:"email"`
-	Password  string     `json:"password" db:"password"`
-	Avatar    string     `json:"avatar" db:"avatar"`
-	Bio       string     `json:"bio" db:"bio"`
-	CreatedAt time.Time  `json:"created_at" db:"created_at"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+	ID             string     `json:"id" db:"id"`
+	Username       string     `json:"username" db:"username"`
+	Email          string     `json:"email" db:"email"`
+	Password       string     `json:"password" db:"password"`
+	ProfilePicture string     `json:"profile_picture" db:"profile_picture"`
+	AboutMessage   string     `json:"about_message" db:"about_message"`
+	IsOnline       bool       `json:"is_online" db:"is_online"`
+	LastSeen       time.Time  `json:"last_seen" db:"last_seen"`
+	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
+	DeletedAt      *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
 type CreateUserReq struct {
@@ -23,12 +25,12 @@ type CreateUserReq struct {
 }
 
 type CreateUserRes struct {
-	ID        string    `json:"id" db:"id"`
-	Username  string    `json:"username" db:"username"`
-	Email     string    `json:"email" db:"email"`
-	Avatar    string    `json:"avatar" db:"avatar"`
-	Bio       string    `json:"bio" db:"bio"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	ID             string    `json:"id" db:"id"`
+	Username       string    `json:"username" db:"username"`
+	Email          string    `json:"email" db:"email"`
+	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
+	AboutMessage   string    `json:"about_message" db:"about_message"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserReq struct {
@@ -37,13 +39,13 @@ type LoginUserReq struct {
 }
 
 type LoginUserRes struct {
-	AccessToken string    `json:"accessToken"`
-	ID          string    `json:"id" db:"id"`
-	Username    string    `json:"username" db:"username"`
-	Email       string    `json:"email" db:"email"`
-	Avatar      string    `json:"avatar" db:"avatar"`
-	Bio         string    `json:"bio" db:"bio"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	AccessToken    string    `json:"accessToken"`
+	ID             string    `json:"id" db:"id"`
+	Username       string    `json:"username" db:"username"`
+	Email          string    `json:"email" db:"email"`
+	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
+	AboutMessage   string    `json:"about_message" db:"about_message"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserWithGoogleReq struct {
@@ -51,13 +53,13 @@ type LoginUserWithGoogleReq struct {
 }
 
 type LoginUserWithGoogleRes struct {
-	AccessToken string    `json:"accessToken"`
-	ID          string    `json:"id" db:"id"`
-	Username    string    `json:"username" db:"username"`
-	Email       string    `json:"email" db:"email"`
-	Avatar      string    `json:"avatar" db:"avatar"`
-	Bio         string    `json:"bio" db:"bio"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	AccessToken    string    `json:"accessToken"`
+	ID             string    `json:"id" db:"id"`
+	Username       string    `json:"username" db:"username"`
+	Email          string    `json:"email" db:"email"`
+	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
+	AboutMessage   string    `json:"about_message" db:"about_message"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserWithFacebookReq struct {
@@ -65,13 +67,13 @@ type LoginUserWithFacebookReq struct {
 }
 
 type LoginUserWithFacebookRes struct {
-	AccessToken string    `json:"accessToken"`
-	ID          string    `json:"id" db:"id"`
-	Username    string    `json:"username" db:"username"`
-	Email       string    `json:"email" db:"email"`
-	Avatar      string    `json:"avatar" db:"avatar"`
-	Bio         string    `json:"bio" db:"bio"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	AccessToken    string    `json:"accessToken"`
+	ID             string    `json:"id" db:"id"`
+	Username       string    `json:"username" db:"username"`
+	Email          string    `json:"email" db:"email"`
+	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
+	AboutMessage   string    `json:"about_message" db:"about_message"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type Repository interface {
