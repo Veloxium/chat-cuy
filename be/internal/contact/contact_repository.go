@@ -16,13 +16,16 @@ func NewRepository(db utils.DBTX) Repository {
 	}
 }
 
-func (r *repository) GetContactByID(ctx context.Context, contactID int64) error {
+func (r *repository) GetContactByID(ctx context.Context, contactID int64) (*GetContactsRes, error) {
 	query := `SELECT id, user_id, username, avatar, created_at
     FROM contacts WHERE id = $1 AND deleted_at IS NULL
     `
-	c := Contact{}
-	err := r.db.QueryRowContext(ctx, query, contactID).Scan(&c.ID, &c.UserId, &c.Username, &c.Avatar, &c.CreatedAt)
-	return err
+	var res GetContactsRes
+	err := r.db.QueryRowContext(ctx, query, contactID).Scan(&res.ID, &res.UserId, &res.Username, &res.Avatar, &res.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &res, nil
 
 }
 
@@ -86,8 +89,8 @@ func (r *repository) GetContactWithUser(ctx context.Context, userId int64) (*Get
 
 	defer rows.Close()
 
-	user := user.User{}
-	contacts := []Contact{}
+	var user user.User
+	var contacts []Contact
 
 	for rows.Next() {
 		c := Contact{}
