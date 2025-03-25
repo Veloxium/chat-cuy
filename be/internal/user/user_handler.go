@@ -71,13 +71,13 @@ func (h *Handler) Login(c *gin.Context) {
 	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
 
 	newResponse := &LoginUserRes{
-		Username:    res.Username,
-		ID:          res.ID,
-		AccessToken: res.AccessToken,
-		Email:       res.Email,
-		Avatar:      res.Avatar,
-		Bio:         res.Bio,
-		CreatedAt:   res.CreatedAt,
+		Username:       res.Username,
+		ID:             res.ID,
+		AccessToken:    res.AccessToken,
+		Email:          res.Email,
+		ProfilePicture: res.ProfilePicture,
+		AboutMessage:   res.AboutMessage,
+		CreatedAt:      res.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
@@ -113,13 +113,13 @@ func (h *Handler) LoginWithGoogle(c *gin.Context) {
 	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
 
 	newResponse := &LoginUserWithGoogleRes{
-		Email:       res.Email,
-		Username:    res.Username,
-		ID:          res.ID,
-		AccessToken: res.AccessToken,
-		Avatar:      res.Avatar,
-		Bio:         res.Bio,
-		CreatedAt:   res.CreatedAt,
+		Email:          res.Email,
+		Username:       res.Username,
+		ID:             res.ID,
+		AccessToken:    res.AccessToken,
+		ProfilePicture: res.ProfilePicture,
+		AboutMessage:   res.AboutMessage,
+		CreatedAt:      res.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
@@ -156,13 +156,13 @@ func (h *Handler) LoginWithFacebook(c *gin.Context) {
 	c.SetCookie("jwt", res.AccessToken, 3600, "/", "localhost", false, true)
 
 	newResponse := &LoginUserWithFacebookRes{
-		Email:       res.Email,
-		Username:    res.Username,
-		ID:          res.ID,
-		AccessToken: res.AccessToken,
-		Avatar:      res.Avatar,
-		Bio:         res.Bio,
-		CreatedAt:   res.CreatedAt,
+		Email:          res.Email,
+		Username:       res.Username,
+		ID:             res.ID,
+		AccessToken:    res.AccessToken,
+		ProfilePicture: res.ProfilePicture,
+		AboutMessage:   res.AboutMessage,
+		CreatedAt:      res.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, utils.ResFormatter{
