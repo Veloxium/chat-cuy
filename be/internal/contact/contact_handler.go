@@ -69,6 +69,37 @@ func (h *Handler) GetAllContacts(c *gin.Context) {
 	})
 }
 
+func (h *Handler) GetContactByID(c *gin.Context) {
+	contactID, err := utils.ParseIDParam(c, "id")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.ResFormatter{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "error :" + err.Error(),
+			Data:       nil,
+		})
+		c.Abort()
+		return
+	}
+	res, err := h.Service.GetContactByID(c.Request.Context(), contactID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.ResFormatter{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			Message:    "error :" + err.Error(),
+			Data:       nil,
+		})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, utils.ResFormatter{
+		Success:    true,
+		StatusCode: http.StatusOK,
+		Message:    "get contact by id add successfully",
+		Data:       res,
+	})
+}
+
 func (h *Handler) AddContact(c *gin.Context) {
 	var contact CreateContactReq
 	if err := c.ShouldBindJSON(&contact); err != nil {
