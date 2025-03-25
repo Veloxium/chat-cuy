@@ -47,6 +47,7 @@ func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Hand
 	// contact route handler
 	authApp.POST("/api/contact", contactHandler.AddContact)
 	authApp.PUT("/api/contact/:id", contactHandler.DeleteContact)
+	authApp.GET("/api/contact/:id", contactHandler.GetContactByID)
 	authApp.GET("/api/contacts", contactHandler.GetAllContacts)
 
 	// websocket route handler
