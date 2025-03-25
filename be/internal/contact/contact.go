@@ -50,7 +50,7 @@ type Repository interface {
 	AddContact(c context.Context, contact *Contact) (*Contact, error)
 	DeleteContact(c context.Context, contactID int64) error
 	GetAllContacts(c context.Context) ([]GetContactsRes, error)
-	GetContactByID(c context.Context, contactID int64) error
+	GetContactByID(c context.Context, contactID int64) (*GetContactsRes, error)
 	GetContactWithUser(c context.Context, userId int64) (*GetContactsWithUserRes, error)
 	GetContactByUserId(c context.Context, userID int64) ([]Contact, error)
 }
