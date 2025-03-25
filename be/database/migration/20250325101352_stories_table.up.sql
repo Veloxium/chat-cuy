@@ -1,0 +1,10 @@
+CREATE TABLE stories(
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL,
+    content_type VARCHAR(20) DEFAULT 'text',
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP + INTERVAL '24 HOURS',
+    deleted_at TIMESTAMP DEFAULT NULL,
+    CONSTRAINT fk_stories_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
