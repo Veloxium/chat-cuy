@@ -29,8 +29,7 @@ func Logger(db *sql.DB) gin.HandlerFunc {
 
 		var level, message string
 
-        // logging entry every response statuscode
-
+		// logging entry every response statuscode
 		switch {
 		case statusCode >= 500:
 			level = "error"
@@ -50,17 +49,31 @@ func Logger(db *sql.DB) gin.HandlerFunc {
 			loggingEntry.Info("request successfully")
 		}
 
-        //insert log to database
-		query := `INSERT INTO logs (level, status_code, method, path, latency, client_ip, message, created_at)
+		//insert log to database
+		query := `INSERT INTO logs(
+		level,
+		status_code,
+		method, path,
+		latency, client_ip,
+		message,
+		created_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) returning id , created_at`
 		ctx, cancle := context.WithTimeout(c, time.Duration(2)*time.Second)
 		defer cancle()
 
-        //execute query to database
-		_, err := db.ExecContext(ctx, query, level, statusCode, c.Request.Method, c.Request.URL.Path, duration, clientIP, message)
-		if err != nil {
+
+		//execute query to database
+		if _, err := db.ExecContext(
+			ctx,
+			query,
+			level,
+			statusCode,
+			c.Request.Method,
+			c.Request.URL.Path,
+			duration,
+			clientIP,
+			message); err != nil {
 			loggingEntry.Error("failed to save log to database: ", err)
 		}
-
 	}
 }
