@@ -6,84 +6,120 @@ import (
 )
 
 type User struct {
-	ID             string     `json:"id" db:"id"`
-	Username       string     `json:"username" db:"username"`
-	Email          string     `json:"email" db:"email"`
-	Password       string     `json:"password" db:"password"`
-	ProfilePicture string     `json:"profile_picture" db:"profile_picture"`
-	AboutMessage   string     `json:"about_message" db:"about_message"`
-	IsOnline       bool       `json:"is_online" db:"is_online"`
-	LastSeen       time.Time  `json:"last_seen" db:"last_seen"`
-	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
-	DeletedAt      *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+	ID             string     `db:"id"`
+	Username       string     `db:"username"`
+	Email          string     `db:"email"`
+	Password       string     `db:"password"`
+	ProfilePicture string     `db:"profile_picture"`
+	AboutMessage   string     `db:"about_message"`
+	IsOnline       bool       `db:"is_online"`
+	LastSeen       time.Time  `db:"last_seen"`
+	CreatedAt      time.Time  `db:"created_at"`
+	DeletedAt      *time.Time `db:"deleted_at"`
+	UpdatedAt      *time.Time `db:"updated_at"`
+}
+
+type SearchUsersRes struct {
+	ID             string `json:"id"`
+	Username       string `json:"username"`
+	Email          string `json:"email"`
+	ProfilePicture string `json:"profile_picture"`
+	AboutMessage   string `json:"about_message"`
+}
+
+type FindUserByIDRes struct {
+	ID             string `json:"id"`
+	Username       string `json:"username"`
+	Email          string `json:"email"`
+	ProfilePicture string `json:"profile_picture"`
+	AboutMessage   string `json:"about_message"`
 }
 
 type CreateUserReq struct {
-	Username string `json:"username" db:"username"`
-	Email    string `json:"email" db:"email"`
-	Password string `json:"password" db:"password"`
+	Username string `form:"username" validate:"required,min=3,max=16"`
+	Email    string `form:"email" validate:"required,email"`
+	Password string `form:"password" validate:"required,min=6"`
+	// ProfilePicture string `form:"profile_picture"`
+	// AboutMessage   string `form:"about_message" validate:"max=255"`
 }
 
 type CreateUserRes struct {
-	ID             string    `json:"id" db:"id"`
-	Username       string    `json:"username" db:"username"`
-	Email          string    `json:"email" db:"email"`
-	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
-	AboutMessage   string    `json:"about_message" db:"about_message"`
-	CreatedAt      time.Time `json:"created_at" db:"created_at"`
+	ID             string    `json:"id"`
+	Username       string    `json:"username"`
+	Email          string    `json:"email"`
+	ProfilePicture string    `json:"profile_picture"`
+	AboutMessage   string    `json:"about_message"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type LoginUserReq struct {
-	Email    string `json:"email" db:"email"`
-	Password string `json:"password" db:"password"`
+	Email    string `form:"email" validate:"required,email"`
+	Password string `form:"password" validate:"required,min=6"`
 }
 
 type LoginUserRes struct {
+	ID             string    `json:"id"`
+	Username       string    `json:"username"`
+	Email          string    `json:"email"`
+	ProfilePicture string    `json:"profile_picture"`
+	AboutMessage   string    `json:"about_message"`
+	CreatedAt      time.Time `json:"created_at"`
 	AccessToken    string    `json:"accessToken"`
-	ID             string    `json:"id" db:"id"`
-	Username       string    `json:"username" db:"username"`
-	Email          string    `json:"email" db:"email"`
-	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
-	AboutMessage   string    `json:"about_message" db:"about_message"`
-	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserWithGoogleReq struct {
-	AccessToken string `json:"accessToken"`
+	AccessToken string `form:"accessToken"`
 }
 
 type LoginUserWithGoogleRes struct {
+	ID             string    `json:"id"`
+	Username       string    `json:"username"`
+	Email          string    `json:"email"`
+	ProfilePicture string    `json:"profile_picture"`
+	AboutMessage   string    `json:"about_message"`
+	CreatedAt      time.Time `json:"created_at"`
 	AccessToken    string    `json:"accessToken"`
-	ID             string    `json:"id" db:"id"`
-	Username       string    `json:"username" db:"username"`
-	Email          string    `json:"email" db:"email"`
-	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
-	AboutMessage   string    `json:"about_message" db:"about_message"`
-	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
 type LoginUserWithFacebookReq struct {
-	AccessToken string `json:"accessToken"`
+	AccessToken string `form:"accessToken"`
+}
+
+type UpdateUserReq struct {
+	Username       *string `form:"username" validate:"omitempty,min=3,max=16"`
+	ProfilePicture *string `form:"-"`
+	AboutMessage   *string `form:"about_message" validate:"omitempty,max=255"`
+}
+
+type UpdateUserRes struct {
+	ID        string     `json:"id"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
 type LoginUserWithFacebookRes struct {
 	AccessToken    string    `json:"accessToken"`
-	ID             string    `json:"id" db:"id"`
-	Username       string    `json:"username" db:"username"`
-	Email          string    `json:"email" db:"email"`
-	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
-	AboutMessage   string    `json:"about_message" db:"about_message"`
-	CreatedAt      time.Time `json:"created_at" db:"created_at"`
+	ID             string    `json:"id"`
+	Username       string    `json:"username"`
+	Email          string    `json:"email"`
+	ProfilePicture string    `json:"profile_picture"`
+	AboutMessage   string    `json:"about_message"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type Repository interface {
+	Putser(ctx context.Context, userID string, user *User) (*User, error)
 	CreateUser(ctx context.Context, user *User) (*User, error)
+	GetUserByID(ctx context.Context, userID string) (*User, error)
 	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	SearchUsersByUsername(ctx context.Context, usernamePrefix string) ([]*User, error)
 }
 
 type Service interface {
-	CreateUser(c context.Context, req *CreateUserReq) (*CreateUserRes, error)
-	Login(c context.Context, req *LoginUserReq) (*LoginUserRes, error)
-	LoginWithGoogle(c context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error)
-	LoginWithFacebook(c context.Context, req *LoginUserWithFacebookReq) (*LoginUserWithFacebookRes, error)
+	UpdateUser(ctx context.Context, userID string, req *UpdateUserReq) (*UpdateUserRes, error)
+	FindUserByID(ctx context.Context, userID string) (*FindUserByIDRes, error)
+	SearchUsers(ctx context.Context, usernamePrefix string) ([]*SearchUsersRes, error)
+	CreateUser(ctx context.Context, req *CreateUserReq) (*CreateUserRes, error)
+	Login(ctx context.Context, req *LoginUserReq) (*LoginUserRes, error)
+	LoginWithGoogle(ctx context.Context, req *LoginUserWithGoogleReq) (*LoginUserWithGoogleRes, error)
+	LoginWithFacebook(ctx context.Context, req *LoginUserWithFacebookReq) (*LoginUserWithFacebookRes, error)
 }
