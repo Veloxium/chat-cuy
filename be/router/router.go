@@ -2,6 +2,7 @@ package router
 
 import (
 	"database/sql"
+	"github.com/Gylmynnn/websocket-sesat/internal/chat"
 	"github.com/Gylmynnn/websocket-sesat/internal/contact"
 	"github.com/Gylmynnn/websocket-sesat/internal/user"
 	"github.com/Gylmynnn/websocket-sesat/internal/websocket"
@@ -15,7 +16,7 @@ import (
 var app *gin.Engine
 
 // initialzed router function
-func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler) {
+func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Handler, contactHandler *contact.Handler, chatHandler *chat.Handler) {
 	app = gin.Default()
 
 	// wrap route with logger
@@ -34,6 +35,9 @@ func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Hand
 		MaxAge: 12 * time.Hour,
 	}))
 
+	app.GET("/ws/chat", chatHandler.HandleWebsocket)
+	app.POST("/api/addChat", chatHandler.AddChat)
+
 	// user authentication route handler
 	app.POST("/api/register", userHandler.CreateUser)
 	app.POST("/api/login/default", userHandler.Login)
@@ -44,6 +48,11 @@ func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Hand
 	// protected route with jwt
 	authApp := app.Group("/")
 	authApp.Use(protected.JWTAuthMiddleware())
+
+	authApp.GET("/api/user/search", userHandler.SearchUsers)
+	authApp.GET("/api/user/:id", userHandler.FindUserByID)
+	authApp.PUT("/api/user/:id", userHandler.UpdateUserByID)
+
 	// contact route handler
 	authApp.POST("/api/contact", contactHandler.AddContact)
 	authApp.PUT("/api/contact/:id", contactHandler.DeleteContact)
@@ -58,5 +67,6 @@ func InitRouter(db *sql.DB, userHandler *user.Handler, wsHandler *websocket.Hand
 }
 
 func Start(addr string) error {
-	return app.Run(addr)
+	err := app.Run(addr)
+	return err
 }
