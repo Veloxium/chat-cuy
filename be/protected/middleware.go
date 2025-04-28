@@ -35,7 +35,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, utils.ResFormatter{
 				Success:    false,
 				StatusCode: http.StatusUnauthorized,
-				Message:    "token format invalid",
+				Message:    "unauthorized required token",
 				Data:       nil,
 			})
 			c.Abort()
