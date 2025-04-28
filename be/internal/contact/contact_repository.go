@@ -95,7 +95,7 @@ func (r *repository) GetContactWithUser(ctx context.Context, userId int64) (*Get
 	for rows.Next() {
 		c := Contact{}
 		err := rows.Scan(
-			&user.ID, &user.Username, &user.Email, &user.Avatar, &user.Bio,
+			&user.ID, &user.Username, &user.Email, &user.ProfilePicture, &user.AboutMessage,
 			&user.CreatedAt, &c.ID, &c.Username, &c.Avatar, &c.CreatedAt,
 		)
 		if err != nil {
@@ -108,8 +108,8 @@ func (r *repository) GetContactWithUser(ctx context.Context, userId int64) (*Get
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
-		Avatar:    user.Avatar,
-		Bio:       user.Bio,
+		Avatar:    user.ProfilePicture,
+		Bio:       user.AboutMessage,
 		CreatedAt: user.CreatedAt,
 		Contacts:  contacts,
 	}, nil
