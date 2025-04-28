@@ -16,4 +16,7 @@ migrateup:
 migratedown:
 	migrate -path database/migration -database "postgresql://root:24434@localhost:5432/go-websocket-sesat?sslmode=disable" -verbose down
 
-.PHONY: postgresinit postgres createdb dropdb migrateup migratedown
+run:
+	go run cmd/main.go
+
+.PHONY: postgresinit postgres createdb dropdb migrateup migratedown run
