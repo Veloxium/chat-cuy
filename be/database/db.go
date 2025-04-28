@@ -2,10 +2,9 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"os"
 )
 
 type Database struct {
@@ -13,19 +12,24 @@ type Database struct {
 }
 
 func NewDatabaseConn() *Database {
-    // load environment variable
+	// load environment variable
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println("failed to load environment")
+		panic("failed to load environment")
 	}
 	dataSource := os.Getenv("DATABASE_CONNECTION")
 	db, err := sql.Open("postgres", dataSource)
 	if err != nil {
-		fmt.Println("failed to connect the database")
+		panic("failed to connect the database")
 	}
 	return &Database{
 		db: db,
 	}
+}
+
+func (d *Database) Ping() error {
+	err := d.db.Ping()
+	return err
 }
 
 func (d *Database) Close() {
