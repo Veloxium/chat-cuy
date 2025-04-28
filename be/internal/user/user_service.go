@@ -3,10 +3,11 @@ package user
 import (
 	"context"
 	"database/sql"
+	"time"
+
 	"github.com/Gylmynnn/websocket-sesat/database"
 	"github.com/Gylmynnn/websocket-sesat/utils"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
 )
 
 var secretKey = utils.LoadENV("JWTSECRETKEY")
@@ -16,11 +17,88 @@ type service struct {
 	timeout time.Duration
 }
 
+// UpdateUser implements Service.
+
 func NewService(repository Repository) Service {
 	return &service{
 		repository,
 		time.Duration(2) * time.Second,
 	}
+}
+
+func (s *service) UpdateUser(ctx context.Context, userID string, req *UpdateUserReq) (*UpdateUserRes, error) {
+	c, cancle := context.WithTimeout(ctx, s.timeout)
+	defer cancle()
+
+	userReq := &User{}
+	if req.Username != nil {
+		userReq.Username = *req.Username
+	}
+	if req.ProfilePicture != nil {
+		userReq.ProfilePicture = *req.ProfilePicture
+	}
+	if req.AboutMessage != nil {
+		userReq.AboutMessage = *req.AboutMessage
+	}
+
+	res, err := s.Repository.Putser(c, userID, userReq)
+	if err != nil {
+		return nil, err
+	}
+
+	userRes := &UpdateUserRes{
+		ID:             res.ID,
+		UpdatedAt:      res.UpdatedAt,
+	}
+
+	return userRes, nil
+}
+
+func (s *service) FindUserByID(ctx context.Context, userID string) (*FindUserByIDRes, error) {
+	c, cancle := context.WithTimeout(ctx, s.timeout)
+	defer cancle()
+
+	user, err := s.Repository.GetUserByID(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userRes := &FindUserByIDRes{
+		ID:             user.ID,
+		Username:       user.Username,
+		Email:          user.Email,
+		ProfilePicture: user.ProfilePicture,
+		AboutMessage:   user.AboutMessage,
+	}
+
+	return userRes, nil
+}
+
+func (s *service) SearchUsers(ctx context.Context, usernamePrefix string) ([]*SearchUsersRes, error) {
+	// if len(usernamePrefix) == 0 || usernamePrefix[0] != '@' {
+	// 	return nil, errors.New("username must start with '@'")
+	// }
+
+	c, cancle := context.WithTimeout(ctx, s.timeout)
+	defer cancle()
+
+	users, err := s.Repository.SearchUsersByUsername(c, usernamePrefix)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*SearchUsersRes
+	for _, user := range users {
+		result = append(result, &SearchUsersRes{
+			ID:             user.ID,
+			Username:       user.Username,
+			Email:          user.Email,
+			ProfilePicture: user.ProfilePicture,
+			AboutMessage:   user.AboutMessage,
+		})
+	}
+
+	return result, nil
 }
 
 func (s *service) CreateUser(c context.Context, req *CreateUserReq) (*CreateUserRes, error) {
@@ -37,7 +115,7 @@ func (s *service) CreateUser(c context.Context, req *CreateUserReq) (*CreateUser
 		Email:          req.Email,
 		Password:       hashedPassword,
 		ProfilePicture: "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden",
-		AboutMessage:   "Hallo cuyyy cihuyyy",
+		AboutMessage:   "hi there i am using chat cuyyy",
 	}
 
 	user, err = s.Repository.CreateUser(ctx, user)
