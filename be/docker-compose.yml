@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: chat-cuy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-chatcuy}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-chatcuy123}
+      POSTGRES_DB: ${DB_NAME:-chat_cuy}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

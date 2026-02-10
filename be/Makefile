@@ -1,22 +1,40 @@
-postgresinit:
-	docker run --name postgres_mydb -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=24434 -d postgres
+include .env
+export
 
-postgres:
-	docker exec -it postgres_mydb psql
+DB_URL=postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSLMODE)
 
-createdb:
-	docker exec -it postgres_mydb createdb --username=root --owner=root go-websocket-sesat
+.PHONY: help run build db-up db-down migrate-up migrate-down migrate-create migrate-force
 
-dropdb:
-	docker exec -it postgres_mydb dropdb go-websocket-sesat
+help: ## Show this help message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-migrateup:
-	migrate -path database/migration -database "postgresql://root:24434@localhost:5432/go-websocket-sesat?sslmode=disable" -verbose up
+run: ## Run the application
+	go run ./cmd/api/
 
-migratedown:
-	migrate -path database/migration -database "postgresql://root:24434@localhost:5432/go-websocket-sesat?sslmode=disable" -verbose down
+build: ## Build the application
+	go build -o bin/api ./cmd/api/
 
-run:
-	go run cmd/main.go
+db-up: ## Start PostgreSQL container
+	docker compose up -d
 
-.PHONY: postgresinit postgres createdb dropdb migrateup migratedown run
+db-down: ## Stop PostgreSQL container
+	docker compose down
+
+db-reset: ## Reset database (stop, remove volume, start)
+	docker compose down -v
+	docker compose up -d
+
+migrate-up: ## Run all migrations
+	migrate -path db/migrations -database "$(DB_URL)" -verbose up
+
+migrate-down: ## Rollback all migrations
+	migrate -path db/migrations -database "$(DB_URL)" -verbose down
+
+migrate-down-1: ## Rollback last migration
+	migrate -path db/migrations -database "$(DB_URL)" -verbose down 1
+
+migrate-create: ## Create a new migration (usage: make migrate-create name=migration_name)
+	migrate create -ext sql -dir db/migrations -seq $(name)
+
+migrate-force: ## Force migration version (usage: make migrate-force version=1)
+	migrate -path db/migrations -database "$(DB_URL)" force $(version)
