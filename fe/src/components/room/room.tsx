@@ -7,66 +7,59 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import useSocket, { Message } from "@/hooks/useSocket";
 import { RoomType } from "@/store/roomStore";
 import { useUserStore } from "@/store/userStore";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoSendSharp } from "react-icons/io5";
 import { MdBlock } from "react-icons/md";
+import { LoaderCircle } from "lucide-react";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+function getAvatarUrl(avatar?: string) {
+  if (!avatar || avatar === "") {
+    return "https://api.dicebear.com/9.x/adventurer/svg?seed=Mason";
+  }
+  if (avatar.startsWith("http")) return avatar;
+  return `${API_URL}${avatar}`;
+}
 
 function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
-  // const socket = useSocket();
   const [msg, setMsg] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
-  const [message, setMessage] = useState("");
-  const [roomID, setRoomID] = useState("");
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const user1 = useUserStore((state) => state.user?.username);
+  const user = useUserStore((state) => state.user);
+  const userId = user?.id ?? 0;
 
-  // useEffect(() => {
-  //   if (!socket || !user1 || !username) {
-  //     console.log(socket);
-  //     console.log(user1);
-  //     console.log(username);
-  //     console.log("Socket or user1 or username is not defined");
-  //     return;
-  //   };
+  const { messages, enterChatRoom, sendMessage, getMessages } = useSocket(userId);
 
-  //   const generatedRoomID = `${user1}_${username}`;
-  //   setRoomID(generatedRoomID);
-  //   socket.emit("join-room", { user1, user2: username });
+  const roomMessages: Message[] = messages[item.roomId] || [];
 
-  //   socket.on("receive-message", (msg: string) => {
-  //     setMessages((prev) => [...prev, msg]);
-  //   });
+  // Enter the chat room and load messages when room changes
+  useEffect(() => {
+    if (item.roomId) {
+      enterChatRoom(item.roomId);
+      setIsLoadingMessages(true);
+      getMessages(item.roomId).finally(() => setIsLoadingMessages(false));
+    }
+  }, [item.roomId, enterChatRoom, getMessages]);
 
-  //   return () => {
-  //     socket.off("receive-message");
-  //   };
-  // }, [socket, user1, username]);
-
-  const scrollBottom = () => {
-    const chatroom = document.getElementById("chatroom");
-    chatroom?.scrollTo(0, chatroom.scrollHeight);
-  };
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [roomMessages.length]);
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!msg) {
-      console.log("Message is empty");
-    }
-    // sendMessage();
-
-    scrollBottom();
+    if (!msg.trim()) return;
+    sendMessage(item.roomId, msg);
+    setMsg("");
   };
-
-  // const sendMessage = () => {
-  //   if (!socket || !roomID || !msg) return;
-  //   socket.emit("send-message", { roomID, message });
-  //   setMessage("");
-  // };
 
   return (
     <div className="relative h-full w-full p-4">
@@ -81,7 +74,7 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
             <IoIosArrowBack size={28} />
           </button>
           <div className="w-16 h-16 rounded-full border relative overflow-hidden bg-white">
-            <img src={item.avatar} alt="avatar" className="w-16 h-16" />
+            <img src={getAvatarUrl(item.avatar)} alt="avatar" className="w-16 h-16 object-cover" />
           </div>
           <div className="flex-1">
             <div className="flex-1 flex justify-between">
@@ -89,8 +82,7 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
                 <p className="text-lg font-semibold capitalize">
                   {item.username}
                 </p>
-                {/* Bio User */}
-                <p className="text-sm line-clamp-1">Serabutan Ngoding</p>
+                <p className="text-sm line-clamp-1">{item.bio}</p>
               </div>
               <div className="flex items-center p-2">
                 <Popover>
@@ -117,32 +109,28 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
           className="no-scrollbar w-full flex-1 flex flex-col rounded-md gap-4 overflow-y-scroll mt-2"
         >
           <div className="h-2" />
-          <ChatBar
-            id={1}
-            msg={{
-              msg: "Hello pukimak kelass, kelas tidak king anjayyy",
-              timestamp: "2021-01-01T11:56:00Z",
-              isSender: true,
-            }}
-          />
-          <ChatBar
-            id={2}
-            msg={{
-              msg: "Anjaayy bang",
-              timestamp: "2021-01-01T11:57:00Z",
-              isSender: false,
-            }}
-          />
-          <ChatBar
-            id={1}
-            msg={{
-              msg: "Itu dia, yang di kelas, yang di kelas",
-              timestamp: "2021-01-01T12:00:00Z",
-              isSender: true,
-            }}
-          />
+          {isLoadingMessages && (
+            <div className="flex justify-center py-4">
+              <LoaderCircle className="animate-spin text-zprimary" size={28} />
+            </div>
+          )}
+          {roomMessages.map((message) => (
+            <ChatBar
+              key={message.id}
+              id={message.id}
+              msg={{
+                msg: message.text,
+                timestamp: message.createdAt,
+                isSender: message.senderId === userId,
+              }}
+            />
+          ))}
+          <div ref={chatEndRef} />
         </motion.div>
-        <div className="fixed md:relative w-[calc(100%-5rem)] md:w-full bottom-4 flex items-center gap-2">
+        <form
+          onSubmit={onSubmitHandler}
+          className="fixed md:relative w-[calc(100%-5rem)] md:w-full bottom-4 flex items-center gap-2"
+        >
           <Input
             placeholder="Type a message"
             className="bg-white h-12 pl-4"
@@ -153,7 +141,7 @@ function Room({ item, clearRoom }: { item: RoomType; clearRoom: () => void }) {
           <Button type="submit" className="w-20 h-10 bg-zprimary">
             <IoSendSharp />
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );

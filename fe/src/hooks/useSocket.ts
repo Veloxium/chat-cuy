@@ -1,85 +1,112 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { useUserStore } from "@/store/userStore";
+import axiosInstance from "@/utils/axiosInstance";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export const SOCKET_SERVER_URL = "http://localhost:3001";
-
-
-interface Message {
-    id: string;
-    text: string;
-    createdAt: string;
-    updatedAt: string;
-    senderId: string;
-    chatRoomId: string;
+export interface Message {
+  id: number;
+  text: string;
+  senderId: number;
+  chatRoomId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface ChatRoom {
-    id: string;
-    name: string;
-    unreadCount: number;
-    messages: Message[];
-    createdAt: string;
-    updatedAt: string;
-}
+const WS_BASE_URL = import.meta.env.VITE_API_URL?.replace(/^http/, "ws") || "ws://localhost:3001";
 
-const useSocket = (userId: string) => {
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [messages, setMessages] = useState<Record<string, Message[]>>({});
-    const [activeRoom, setActiveRoom] = useState<string>("");
+const useSocket = (userId: number) => {
+  const wsRef = useRef<WebSocket | null>(null);
+  const [messages, setMessages] = useState<Record<number, Message[]>>({});
+  const [activeRoom, setActiveRoom] = useState<number | null>(null);
+  const activeRoomRef = useRef<number | null>(null);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
-    useEffect(() => {
-        const newSocket = io(SOCKET_SERVER_URL);
-        setSocket(newSocket);
+  const getToken = () => useUserStore.getState().user?.token || "";
 
-        newSocket.emit("joinRoom", userId);
+  const connect = useCallback(() => {
+    const token = getToken();
+    if (!token) return;
 
-        // newSocket.on("updateChatList", (updatedRooms: ChatRoom[]) => {
-        //     setChatRooms(updatedRooms);
-        // });
+    const ws = new WebSocket(`${WS_BASE_URL}/ws?token=${token}`);
 
-        newSocket.on("receiveMessage", (newMessage: Message) => {
-            console.log(newMessage);
-            setMessages((prev) => ({
-                ...prev,
-                [activeRoom]: [...(prev[activeRoom] || []), newMessage],
-            }));
-        });
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [userId]);
-
-    const enterChatRoom = (roomId: string) => {
-        if (socket) {
-            socket.emit("enterChatRoom", { roomId, userId });
-            setActiveRoom(roomId);
-        }
+    ws.onopen = () => {
+      // Send joinRoom to register this user on the hub
+      ws.send(JSON.stringify({
+        type: "joinRoom",
+        payload: { userId },
+      }));
     };
 
-    const sendMessage = (roomId: string, content: string, userId: string,) => {
-        if (socket) {
-            socket.emit("sendMessage", { roomId, content, userId });
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "receiveMessage") {
+          const msg: Message = data.payload;
+          setMessages((prev) => ({
+            ...prev,
+            [msg.chatRoomId]: [...(prev[msg.chatRoomId] || []), msg],
+          }));
         }
+      } catch (err) {
+        console.error("Failed to parse WebSocket message:", err);
+      }
     };
 
-    const getMessages = async (roomId: string) => {
-        try {
-            const { data } = await axios.get<Message[]>(
-                `${SOCKET_SERVER_URL}/messages/${roomId}`
-            );
-            setMessages((prev) => ({ ...prev, [roomId]: data }));
-        } catch (error) {
-            console.error("Failed to fetch messages", error);
-        }
+    ws.onclose = () => {
+      // Auto-reconnect after 3 seconds
+      reconnectTimeoutRef.current = setTimeout(() => {
+        connect();
+      }, 3000);
     };
 
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+      ws.close();
+    };
 
+    wsRef.current = ws;
+  }, [userId]);
 
+  useEffect(() => {
+    connect();
 
+    return () => {
+      clearTimeout(reconnectTimeoutRef.current);
+      wsRef.current?.close();
+    };
+  }, [connect]);
 
-    return { messages, activeRoom, enterChatRoom, sendMessage, getMessages };
+  const enterChatRoom = useCallback((roomId: number) => {
+    setActiveRoom(roomId);
+    activeRoomRef.current = roomId;
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: "enterChatRoom",
+        payload: { roomId, userId },
+      }));
+    }
+  }, [userId]);
+
+  const sendMessage = useCallback((roomId: number, content: string) => {
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: "sendMessage",
+        payload: { roomId, content, userId },
+      }));
+    }
+  }, [userId]);
+
+  const getMessages = useCallback(async (roomId: number) => {
+    try {
+      const { data } = await axiosInstance.get<Message[]>(`/api/messages/${roomId}`);
+      setMessages((prev) => ({ ...prev, [roomId]: data }));
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+    }
+  }, []);
+
+  return { messages, activeRoom, enterChatRoom, sendMessage, getMessages };
 };
 
 export default useSocket;

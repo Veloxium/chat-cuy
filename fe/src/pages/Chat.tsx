@@ -1,30 +1,22 @@
 import ChatItem from "@/components/chatitem/chatitem";
 import { Input } from "@/components/ui/input";
-import dataChatItem from "@/data/chatitem";
-import SideBarLayout from "@/layout/SideBarLayout";
-import { useUserStore } from "@/store/userStore";
+import { useChatRooms } from "@/utils/queryChat";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { useDebounce } from "use-debounce";
 import { motion } from "framer-motion";
 import { container, child } from "@/components/animation/oneonone";
+import { LoaderCircle } from "lucide-react";
 
 function ChatPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [search] = useDebounce(searchTerm, 500);
-  const { user } = useUserStore((state) => state);
-  // const { data, status } = useQuery({
-  //   queryKey: ["getchatrooms"],
-  //   queryFn: async () => {
-  //     const response = await axiosInstance.get("/chatrooms/" + user?.id);
-  //     return response.data;
-  //   },
-  // });
+  const { data: chatRooms, isLoading, isError } = useChatRooms();
 
-  const chats = dataChatItem.filter(
+  const chats = (chatRooms || []).filter(
     (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.message.text.toLowerCase().includes(search.toLowerCase())
+      item.otherUsername.toLowerCase().includes(search.toLowerCase()) ||
+      (item.lastMessage || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +35,14 @@ function ChatPage() {
         />
         <CiSearch size={24} className="absolute top-[8px] left-2 " />
       </div>
+      {isLoading && (
+        <div className="flex justify-center mt-8">
+          <LoaderCircle className="animate-spin text-zprimary" size={32} />
+        </div>
+      )}
+      {isError && (
+        <p className="text-red-500 text-center mt-4">Gagal memuat chat</p>
+      )}
       <motion.div
         variants={container()}
         initial="hidden"
@@ -50,7 +50,7 @@ function ChatPage() {
         exit="exit"
         className="flex flex-col space-y-2 mt-4"
       >
-        {chats.map((item: any) => (
+        {chats.map((item) => (
           <motion.div variants={child} key={item.id}>
             <ChatItem items={item} />
           </motion.div>

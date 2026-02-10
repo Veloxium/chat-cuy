@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import registerSchema from "@/schema/registerSchema";
+import { useUserStore } from "@/store/userStore";
+import axiosInstance from "@/utils/axiosInstance";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -9,6 +11,7 @@ import { FaGoogle } from "react-icons/fa";
 import { ImFacebook } from "react-icons/im";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 type RegisterFormInputs = z.infer<typeof registerSchema>;
@@ -19,6 +22,10 @@ function RegisterForm({
   setIsNewUser: (value: boolean) => void;
 }) {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string>("");
+  const addUser = useUserStore((state) => state.addUser);
+  const navigate = useNavigate();
 
   const container = {
     hidden: { opacity: 0 },
@@ -52,8 +59,24 @@ function RegisterForm({
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterFormInputs) => {
+    setIsLoading(true);
+    setApiError("");
+    try {
+      const res = await axiosInstance.post("/api/register", {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      });
+      addUser(res.data);
+      navigate("/chat");
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message || "Registrasi gagal, coba lagi";
+      setApiError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -171,13 +194,19 @@ function RegisterForm({
           </motion.div>
         </div>
       </div>
+      {apiError && (
+        <motion.p variants={item} className="text-sm text-red-500 text-center">
+          {apiError}
+        </motion.p>
+      )}
       <motion.div variants={item}>
         <button
           type="submit"
+          disabled={isLoading}
           className="mt-2 flex w-full gap-2 items-center justify-center cursor-pointer"
         >
-          <p className="border-2 border-zprimary bg-zprimary hover:bg-hprimary text-white font-medium rounded-md px-4 py-2 w-full ease-in duration-300">
-            Daftar Cuy
+          <p className={`border-2 border-zprimary bg-zprimary hover:bg-hprimary text-white font-medium rounded-md px-4 py-2 w-full ease-in duration-300 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
+            {isLoading ? "Loading..." : "Daftar Cuy"}
           </p>
         </button>
       </motion.div>

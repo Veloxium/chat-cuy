@@ -5,6 +5,22 @@ import { IoPauseSharp, IoPlay, IoSendSharp } from "react-icons/io5";
 import { Button } from "../ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+function getImageUrl(url?: string) {
+  if (!url || url === "") return "";
+  if (url.startsWith("http")) return url;
+  return `${API_URL}${url}`;
+}
+
+function getAvatarUrl(avatar?: string) {
+  if (!avatar || avatar === "") {
+    return "https://api.dicebear.com/9.x/adventurer/svg?seed=Mason";
+  }
+  if (avatar.startsWith("http")) return avatar;
+  return `${API_URL}${avatar}`;
+}
+
 function Story() {
   const time = 15;
   const story = useStoryStore((state) => state.story);
@@ -56,9 +72,9 @@ function Story() {
             </button>
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white">
               <img
-                src={story?.avatar}
+                src={getAvatarUrl(story?.avatar)}
                 alt="avatar"
-                className="object-cover"
+                className="object-cover w-full h-full"
               />
             </div>
             <p className="font-bold text-white">{story?.username}</p>
@@ -79,7 +95,7 @@ function Story() {
         />
       </div>
       <div className="fixed bg-black bg-opacity-15 w-[calc(100%-3rem)] md:absolute bottom-0 px-4 pb-4 pt-2">
-        <p className="text-center text-white mb-2">{story?.text}</p>
+        <p className="text-center text-white mb-2">{story?.caption}</p>
         <div className="flex items-center gap-2">
           <div className="w-full bg-white bg-opacity-25 rounded-lg group">
             <Input
@@ -94,7 +110,7 @@ function Story() {
         </div>
       </div>
       <div className="h-full w-full flex justify-center items-center">
-        <img src={story?.url} className="object-contain" />
+        <img src={getImageUrl(story?.image_url)} className="object-contain" />
       </div>
     </div>
   );

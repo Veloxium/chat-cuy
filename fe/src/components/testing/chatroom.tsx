@@ -1,24 +1,21 @@
 import useSocket from "@/hooks/useSocket";
+import { Message } from "@/hooks/useSocket";
 import { useEffect, useState } from "react";
-import { Message } from "react-hook-form";
 
 interface ChatRoomProps {
-  userId: string;
-  roomId: string;
+  userId: number;
+  roomId: number;
 }
 
 const ChatRoom: React.FC<ChatRoomProps> = ({ userId, roomId }) => {
-  interface RoomMessages {
-    [key: string]: { senderId: string; text: string }[];
-  }
-
-  const [roomMessages, setRoomMessages] = useState<RoomMessages>({});
   const { messages, sendMessage, getMessages } = useSocket(userId);
   const [newMessage, setNewMessage] = useState("");
 
+  const roomMessages: Message[] = messages[roomId] || [];
+
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      sendMessage(roomId, newMessage, userId);
+      sendMessage(roomId, newMessage);
       setNewMessage("");
     }
   };
@@ -27,15 +24,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ userId, roomId }) => {
     getMessages(roomId);
   }, [roomId]);
 
-  useEffect(() => {
-    return setRoomMessages(messages);
-  }, [messages]);
-
   return (
     <div className="chat-room">
       <h2>Room: {roomId}</h2>
       <div className="messages">
-        {roomMessages[roomId]?.map((msg, index) => (
+        {roomMessages.map((msg, index) => (
           <p key={index}>
             <strong>{msg.senderId}:</strong> {msg.text}
           </p>

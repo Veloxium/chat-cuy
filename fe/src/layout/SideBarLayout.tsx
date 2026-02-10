@@ -4,7 +4,8 @@ import Story from "@/components/story/story";
 import IndexLayout from "@/layout/IndexLayout";
 import { useRoomStore } from "@/store/roomStore";
 import { useStoryStore } from "@/store/storyStore";
-import { ReactNode, useEffect, useState } from "react";
+import { useUserStore } from "@/store/userStore";
+import { ReactNode } from "react";
 import {
   IoChatbubbleEllipsesOutline,
   IoPeopleOutline,
@@ -13,14 +14,27 @@ import {
 import { LuCircleDotDashed } from "react-icons/lu";
 import { Link, useLocation } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+function getAvatarUrl(avatar?: string) {
+  if (!avatar || avatar === "") {
+    return "https://api.dicebear.com/9.x/adventurer/svg?seed=Mason";
+  }
+  if (avatar.startsWith("http")) {
+    return avatar;
+  }
+  return `${API_URL}${avatar}`;
+}
+
 function SideBarLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const urlpath = location.pathname;
   const story = useStoryStore((state) => state.story);
-  const roomID = useRoomStore((state) => state.room?.id);
+  const roomID = useRoomStore((state) => state.room?.roomId);
   const room = useRoomStore((state) => state.room);
   const clearRoom = useRoomStore((state) => state.clearRoom);
   const clearStory = useStoryStore((state) => state.clearStory);
+  const user = useUserStore((state) => state.user);
 
   const handlePageChange = () => {
     clearRoom();
@@ -73,8 +87,9 @@ function SideBarLayout({ children }: { children: ReactNode }) {
         <div className="mb-20">
           <div className="w-10 h-10 rounded-md overflow-hidden bg-white">
             <img
-              src="https://api.dicebear.com/9.x/adventurer/svg?seed=Mason"
+              src={getAvatarUrl(user?.avatar)}
               alt="avatar"
+              className="w-full h-full object-cover"
             />
           </div>
         </div>

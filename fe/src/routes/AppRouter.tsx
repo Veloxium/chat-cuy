@@ -5,7 +5,7 @@ import { PublicRoutes } from "./PublicRoutes";
 
 
 export const AppRouter = () => {
-  const user = useUserStore((state) => state.user || true);
+  const user = useUserStore((state) => state.user);
   return (
     <BrowserRouter>
       <Routes>

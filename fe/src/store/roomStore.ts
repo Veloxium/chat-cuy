@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 
 export type RoomType = {
-    id: number
+    roomId: number
+    otherUserId: number
     avatar: string
     username: string
     bio: string
